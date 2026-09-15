@@ -1,0 +1,6 @@
+{
+  "name": "WebEra Portfolio",
+  "description": "Portfolio for WebEra - Dizajn van vremena, a timeless design studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
