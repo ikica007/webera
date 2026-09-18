@@ -1,8 +1,20 @@
-import { motion } from "motion/react";
-import { useLanguage } from "../context/LanguageContext";
-import { ElasticGallery, ElasticItemProps } from "./ui/elastic-gallery";
+"use client";
 
-const projects: ElasticItemProps[] = [
+import { cn } from "../../lib/utils";
+import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+
+export interface ElasticItemProps {
+  id: string;
+  title: string;
+  category: string;
+  src: string;
+  alt: string;
+  url?: string;
+  description?: string;
+}
+
+const defaultItems: ElasticItemProps[] = [
   {
     id: "01",
     title: "Montana Shop",
@@ -54,7 +66,7 @@ const projects: ElasticItemProps[] = [
   {
     id: "07",
     title: "Efen Izgradnja",
-    category: "Civil Construction",
+    category: "Civil & Construction",
     src: "/efen-izgradnja.png",
     alt: "Efen Izgradnja",
     url: "https://efen-izgradnja.vercel.app/",
@@ -62,55 +74,169 @@ const projects: ElasticItemProps[] = [
   {
     id: "08",
     title: "Void Webdesign",
-    category: "Creative Agency",
+    category: "Design Agency",
     src: "/void-webdesign.png",
     alt: "Void Webdesign",
     url: "https://void-webdesign.vercel.app/",
-  }
+  },
 ];
 
-export function SelectedWorks() {
-  const { language, t } = useLanguage();
+interface ElasticGalleryProps {
+  items?: ElasticItemProps[];
+  className?: string;
+  viewLabel?: string;
+}
+
+export function ElasticGallery({
+  items = defaultItems,
+  className,
+  viewLabel = "Posjeti sajt",
+}: ElasticGalleryProps) {
+  const [activeId, setActiveId] = useState<string | null>(items[0]?.id || "01");
 
   return (
-    <section id="work" className="bg-bg py-12 md:py-16">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12">
-        
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="mb-8 md:mb-12"
-        >
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-8 h-px bg-stroke" />
-            <span className="text-xs text-muted uppercase tracking-[0.3em]">{t('selectedWorks')}</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-text-primary tracking-tight leading-tight">
-            {language === 'bs' ? 'Istaknuti' : 'Featured'} <span className="font-display italic">{language === 'bs' ? 'projekti' : 'projects'}</span>
-          </h2>
-          <p className="text-muted mt-3 max-w-lg text-sm sm:text-base">
-            {t('selectedDesc')}
-          </p>
-        </motion.div>
+    <div className={cn("w-full py-4 md:py-6", className)}>
+      {/* Container: Fiksna visina na desktopu, adaptivna na mobitelima */}
+      <div className="mx-auto flex h-[620px] w-full flex-col gap-2 sm:gap-2.5 md:h-[560px] lg:h-[620px] md:flex-row md:gap-3">
+        {items.map((item) => {
+          const isActive = activeId === item.id;
 
-        {/* Elastic Gallery */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          viewport={{ once: true, margin: "-80px" }}
-        >
-          <ElasticGallery
-            items={projects}
-            viewLabel={language === "bs" ? "Posjeti sajt" : "View Project"}
-          />
-        </motion.div>
+          return (
+            <div
+              key={item.id}
+              onMouseEnter={() => setActiveId(item.id)}
+              onClick={() => {
+                if (!isActive) {
+                  setActiveId(item.id);
+                } else if (item.url) {
+                  window.open(item.url, "_blank", "noopener,noreferrer");
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setActiveId(item.id);
+                }
+              }}
+              className={cn(
+                "group relative cursor-pointer overflow-hidden rounded-2xl border border-stroke bg-surface",
+                // Tranzicija za širenje/skupljanje
+                "transition-[flex,filter] duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]",
+                // Aktivna kartica zauzima veći dio, neaktivne se skupljaju
+                isActive ? "flex-[4] md:flex-[4.2]" : "flex-[1]",
+                // Osvjetljenje
+                isActive
+                  ? "brightness-100 ring-1 ring-white/20 shadow-2xl"
+                  : "brightness-[0.4] hover:brightness-75"
+              )}
+            >
+              {/* Background slika */}
+              <div className="absolute inset-0 h-full w-full overflow-hidden">
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className={cn(
+                    "h-full w-full object-cover object-top transition-transform duration-1000",
+                    isActive ? "scale-100" : "scale-110"
+                  )}
+                />
+
+                {/* Halftone tačkasti overlay */}
+                <div
+                  className="absolute inset-0 opacity-20 mix-blend-multiply pointer-events-none"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle, #000 1px, transparent 1px)",
+                    backgroundSize: "4px 4px",
+                  }}
+                />
+
+                {/* Gradijent za čitljivost teksta */}
+                <div
+                  className={cn(
+                    "absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 transition-opacity duration-500",
+                    isActive ? "opacity-100" : "opacity-70"
+                  )}
+                />
+              </div>
+
+              {/* Sadržaj kartice */}
+              <div className="absolute bottom-0 left-0 right-0 flex h-full flex-col justify-end p-4 sm:p-5 md:p-6 lg:p-8">
+                {/* Aktivni sadržaj (prikazuje se kad je otvorena) */}
+                <div
+                  className={cn(
+                    "flex flex-col gap-2 transition-all duration-500 z-10",
+                    isActive
+                      ? "translate-y-0 opacity-100 delay-150"
+                      : "translate-y-8 opacity-0 pointer-events-none"
+                  )}
+                >
+                  {/* Kategorija i redni broj */}
+                  <div className="flex items-center gap-2.5">
+                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-xs font-medium uppercase tracking-wider text-white backdrop-blur-md">
+                      {item.category}
+                    </span>
+                    <span className="text-white/40 text-xs font-mono">
+                      {item.id} / 0{items.length}
+                    </span>
+                  </div>
+
+                  {/* Naslov */}
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-display italic leading-none">
+                    {item.title}
+                  </h3>
+
+                  {/* Dugme za posjetu */}
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 sm:mt-3 inline-flex items-center gap-2.5 rounded-full bg-white/10 border border-white/20 hover:bg-white hover:text-black px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-white transition-all w-fit group/btn backdrop-blur-sm"
+                    >
+                      <span>{viewLabel}</span>
+                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Neaktivni sadržaj (vertikalni tekst na desktopu) */}
+                <div
+                  className={cn(
+                    "absolute transition-all duration-500 pointer-events-none z-10",
+                    "bottom-3 left-1/2 -translate-x-1/2 md:bottom-6",
+                    isActive ? "opacity-0 scale-50" : "opacity-100 delay-200"
+                  )}
+                >
+                  {/* Desktop: Vertikalni naslov */}
+                  <div className="hidden whitespace-nowrap text-xs md:text-sm font-bold uppercase tracking-[0.25em] text-white/80 [writing-mode:vertical-rl] rotate-180 md:flex items-center gap-3">
+                    <span className="text-[10px] text-white/40 font-mono">
+                      {item.id}
+                    </span>
+                    <span className="font-display italic tracking-wide">
+                      {item.title}
+                    </span>
+                  </div>
+
+                  {/* Mobile: Horizontalni naslov */}
+                  <div className="flex items-center gap-2 text-xs font-medium text-white/90 md:hidden">
+                    <span className="text-[10px] text-white/40 font-mono">
+                      {item.id}
+                    </span>
+                    <span className="truncate max-w-[180px] font-display italic text-sm">
+                      {item.title}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </section>
+    </div>
   );
 }
 
-export default SelectedWorks;
+export default ElasticGallery;
