@@ -33,14 +33,14 @@ export function About() {
       if (el) el.style.visibility = on ? "visible" : "hidden";
     };
     show(beat1.current, a > -0.05 && a < 0.62);
-    show(beat2.current, a > 0.45 && a < 1.12);
+    show(beat2.current, a > 0.45 && a < 0.96);
     if (a < -0.1 || a > 1.15) return;
     // svaki red: ulaz (od, do), izlaz (od, do)
     const timing: [number, number, number, number][] = [
       [0.02, 0.12, 0.44, 0.52],
       [0.07, 0.17, 0.46, 0.54],
-      [0.55, 0.65, 0.95, 1.03],
-      [0.6, 0.7, 0.97, 1.05],
+      [0.52, 0.62, 0.84, 0.91],
+      [0.57, 0.67, 0.86, 0.93],
     ];
     timing.forEach(([a0, a1, b0, b1], i) => {
       reveal(lines.current[i], ramp(a0, a1, a) - 1 + ramp(b0, b1, a));
