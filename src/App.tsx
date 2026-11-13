@@ -3,47 +3,82 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { Backdrop } from "./components/Backdrop";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Navbar } from "./components/Navbar";
+import { Hud } from "./components/Hud";
+import { Cursor } from "./components/Cursor";
 import { Hero } from "./components/Hero";
+import { About, Principles } from "./components/About";
 import { SelectedWorks } from "./components/SelectedWorks";
-import { About } from "./components/About";
 import { Stats } from "./components/Stats";
-import { Echoid } from "./components/Echoid";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Contact } from "./components/Contact";
+import { CHAPTERS } from "./lib/engine";
 
-gsap.registerPlugin(ScrollTrigger);
-
+/**
+ * Sajt je jedan neprekidan kadar. Sve što se vidi stoji na ekranu (Backdrop +
+ * slojevi sa tekstom), a skrol samo pomjera vrijeme. Dužinu svakog dijela
+ * određuje lista CHAPTERS u src/lib/engine.ts.
+ */
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [entered, setEntered] = useState(false);
 
-  useEffect(() => {
-    // Disable scrolling while loading
-    if (isLoading) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+  // Sajt uvijek kreće od početka snimka.
+  useLayoutEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
     }
-  }, [isLoading]);
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Visina ekrana se pamti jednom, da adresna traka na telefonu ne pomjera vrijeme.
+  useLayoutEffect(() => {
+    let lastWidth = 0;
+    const setUnit = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      document.documentElement.style.setProperty("--unit", `${window.innerHeight}px`);
+    };
+    setUnit();
+    window.addEventListener("resize", setUnit);
+    return () => window.removeEventListener("resize", setUnit);
+  }, []);
+
+  // Dok traje učitavanje, skrol je zaključan.
+  useEffect(() => {
+    document.documentElement.classList.toggle("is-locked", !entered);
+  }, [entered]);
 
   return (
-    <div className="bg-bg min-h-screen text-text-primary selection:bg-white/20 overflow-x-hidden">
-      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
-      
-      {!isLoading && (
-        <>
-          <Navbar />
-          <main>
-            <Hero />
-            <SelectedWorks />
-            <About />
-            <Stats />
-            <Echoid />
-          </main>
-        </>
-      )}
-    </div>
+    <>
+      <Backdrop />
+      <main className="ui">
+        <Hero entered={entered} />
+        <About />
+        <SelectedWorks />
+        <Principles />
+        <Stats />
+        <Contact />
+      </main>
+      <Navbar entered={entered} />
+      <Hud entered={entered} />
+      <Cursor />
+
+      {/* Prazna traka koja daje dužinu skrola; svako poglavlje ima svoj dio. */}
+      <div className="track" aria-hidden="true">
+        {CHAPTERS.map((chapter, i) => (
+          <div
+            key={chapter.id}
+            id={chapter.id}
+            style={{
+              height: `calc(var(--unit, 100vh) * ${chapter.len + (i === CHAPTERS.length - 1 ? 1 : 0)})`,
+            }}
+          />
+        ))}
+      </div>
+
+      {!entered && <LoadingScreen onDone={() => setEntered(true)} />}
+    </>
   );
 }
