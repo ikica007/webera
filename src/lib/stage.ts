@@ -63,6 +63,8 @@ export type StageInput = {
   swarm: { spin: number; x: number; y: number; z: number; radius: number; height: number; alpha: number };
   /** dubina ose spirale: paneli iza nje crtaju se prije prstenova */
   axisZ: number;
+  /** trag miša: do 12 tačaka (x, y u 0–1 ekrana, jačina 0–1) */
+  trail: Float32Array;
 };
 
 export type Rect = { x: number; y: number; w: number; h: number };
@@ -122,6 +124,7 @@ uniform float uTime;
 uniform float uDim;
 uniform vec3 uGlowA;
 uniform vec3 uGlowB;
+uniform vec3 uTrail[12];
 varying vec2 vUv;
 
 float hash(vec2 p) {
@@ -130,7 +133,20 @@ float hash(vec2 p) {
 void main() {
   vec2 c = vUv - 0.5;
   float r2 = dot(c, c);
-  vec2 cuv = frameUv(vUv);
+  // tečni trag miša: slika se razmiče oko tačaka kuda je miš prošao
+  vec2 bend = vec2(0.0);
+  float wake = 0.0;
+  float ra0 = uRes.x / uRes.y;
+  for (int i = 0; i < 12; i++) {
+    vec3 tp = uTrail[i];
+    if (tp.z <= 0.001) continue;
+    vec2 dd = (vUv - tp.xy) * vec2(ra0, 1.0);
+    float rr = dot(dd, dd);
+    float f = exp(-rr * 90.0) * tp.z;
+    bend += dd * f * 0.55;
+    wake += f;
+  }
+  vec2 cuv = frameUv(vUv - bend / vec2(ra0, 1.0));
 
   // brzina: radijalno razvlačenje sa razdvajanjem boja
   float amount = uSpeed * (0.05 + r2 * 0.16);
@@ -148,6 +164,8 @@ void main() {
   float vignette = smoothstep(1.05, 0.2, length(c * vec2(1.05, 0.95)) * 1.25);
   col *= mix(0.55, 1.0, vignette);
   col *= 1.0 - uDim;
+  // trag blago posvijetli i oboji ivicu talasa
+  col += vec3(0.25, 0.45, 0.7) * smoothstep(0.0, 1.0, wake) * 0.12;
   // obojeni odsjaji u uglovima, boja prati epohu
   col += uGlowA * exp(-distance(vUv, vec2(1.0, 1.0)) * 2.4);
   col += uGlowB * exp(-distance(vUv, vec2(0.0, 0.0)) * 2.8);
@@ -772,6 +790,7 @@ export function createStage(canvas: HTMLCanvasElement) {
     gl!.uniform1f(screen.u.uDim, input.dim);
     gl!.uniform3fv(screen.u.uGlowA, input.glow[0]);
     gl!.uniform3fv(screen.u.uGlowB, input.glow[1]);
+    gl!.uniform3fv(screen.u['uTrail[0]'] ?? screen.u.uTrail, input.trail);
     gl!.drawArrays(gl!.TRIANGLES, 0, 3);
 
     // 2. prašina i daleke čestice
