@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Language = 'bs' | 'en';
+export type Language = 'bs' | 'en';
 
 type Translations = {
   [key in Language]: {
@@ -8,103 +8,131 @@ type Translations = {
   };
 };
 
+/** Svi tekstovi na sajtu. Mijenjaj ih ovdje, na oba jezika. */
 const translations: Translations = {
-  en: {
-    // Navbar
-    home: 'Home',
-    work: 'Work',
-    resume: 'Resume',
-    sayHi: 'Say hi ↗',
-    
-    // Loading Screen
-    loadingPre: 'WEBERA',
-    loadingNum: '00',
-    loadingRole: 'DESIGN / DEV',
-    
-    // Hero
-    name: 'WebEra',
-    slogan: 'Timeless design',
-    heroDesc: 'Designing seamless digital interactions by focusing on the unique nuances which bring systems to life.',
-    seeWorks: 'See Works',
-    reachOut: 'Reach out...',
-    scroll: 'SCROLL',
-
-    // Selected Works
-    selectedWorks: 'Selected Works',
-    selectedDesc: 'Featured projects highlighting interaction and visual design.',
-    viewProject: 'View Project',
-    
-    // Journal
-    journal: 'Journal',
-    journalDesc: 'Thoughts, learnings, and creative experiments.',
-    readMore: 'Read Article',
-    
-    // Explorations
-    explorations: 'Explorations',
-    explorationsDesc: 'Visual experiments and creative coding sketches.',
-    
-    // About
-    aboutTitle: 'About us',
-    aboutSubtitle: 'Timeless design.',
-    aboutText: "We strive to create websites that last, inspire, and deliver results, tailored exactly to our clients' wishes. We haven't been in the game for long, but we know time is on our side, because WebEra delivers timeless design.",
-
-    // Stats
-    statsTitle: 'By the numbers',
-    statsDesc: 'A quick overview of my experience and impact.',
-    
-    // Echoid (Footer)
-    readyToCollab: 'Ready to collaborate?',
-    availableForProjects: 'Available for projects',
-    rightsReserved: '© 2026 WebEra. All rights reserved.',
-  },
   bs: {
-    // Navbar
-    home: 'Početna',
+    // Navigacija
     work: 'Radovi',
-    resume: 'Biografija',
-    sayHi: 'Kontaktiraj nas ↗',
-    
-    // Loading Screen
-    loadingPre: 'WEBERA',
-    loadingNum: '00',
-    loadingRole: 'DIZAJN / DEV',
-    
-    // Hero
-    name: 'WebEra',
+    about: 'O nama',
+    contact: 'Kontakt',
+
+    // Učitavanje
+    loadingLabel: 'Učitavanje',
+
+    // Početak
     slogan: 'Dizajn van vremena',
-    heroDesc: 'Dizajniramo besprijekorne digitalne interakcije fokusirajući se na jedinstvene nijanse koje sistemima daju život.',
-    seeWorks: 'Vidi Radove',
-    reachOut: 'Kontaktiraj nas...',
-    scroll: 'SKROLAJ',
+    heroDesc: 'Sajtovi koji ne stare. I koji prodaju.',
+    scrollHint: 'Skroluj. Vrijeme je u tvojim rukama.',
 
-    // Selected Works
-    selectedWorks: 'Odabrani Radovi',
-    selectedDesc: 'Istaknuti projekti koji naglašavaju interakciju i vizualni dizajn.',
-    viewProject: 'Pogledaj Projekat',
-    
-    // Journal
-    journal: 'Dnevnik',
-    journalDesc: 'Razmišljanja, učenja i kreativni eksperimenti.',
-    readMore: 'Pročitaj Članak',
-    
-    // Explorations
-    explorations: 'Istraživanja',
-    explorationsDesc: 'Vizualni eksperimenti i kreativno kodiranje.',
-    
-    // About
-    aboutTitle: 'O nama',
-    aboutSubtitle: 'Dizajn van vremena.',
-    aboutText: 'Radimo na tome da pravimo websajtove koji traju, koji inspirišu, koji daju rezultat i to tačno po željama klijenata. Nismo dugo u igri, ali znamo da je vrijeme na našoj strani, jer WebEra daje dizajn van vremena.',
+    // Ideja
+    manifestA: 'Trendovi prolaze.',
+    manifestB: 'Dobar dizajn ostaje.',
+    manifestText:
+      'Radimo na tome da pravimo websajtove koji traju, koji inspirišu, koji daju rezultat, i to tačno po željama klijenata.',
+    manifestC: 'Nismo dugo u igri.',
+    manifestD: 'Ali vrijeme je na našoj strani.',
 
-    // Stats
+    // Radovi
+    worksTitle: 'Odabrani radovi',
+    worksDesc: 'Svaki projekat je priča za sebe.',
+    visitSite: 'Posjeti sajt',
+    view: 'Posjeti',
+    opensNewTab: 'otvara se u novom tabu',
+    prevWork: 'Prethodni projekat',
+    nextWork: 'Sljedeći projekat',
+
+    // Principi
+    principlesTitle: 'Zašto naš dizajn traje',
+    p1Title: 'Brzina i optimizacija',
+    p1Desc: 'Sajtovi koji se učitavaju u treptaju oka, sa čistim i optimizovanim kodom.',
+    p2Title: 'Fokus na konverzije',
+    p2Desc: 'Dizajn koji nije samo lijep, već strateški vodi korisnika ka cilju.',
+    p3Title: 'Sigurnost i stabilnost',
+    p3Desc: 'Koristimo moderne tehnologije koje garantuju dugoročnu stabilnost.',
+    p4Title: 'Dizajn van vremena',
+    p4Desc: 'Estetika koja ne prati samo kratkotrajne trendove, već traje godinama.',
+
+    // Brojke
     statsTitle: 'U brojkama',
-    statsDesc: 'Brzi pregled našeg iskustva i uticaja.',
-    
-    // Echoid (Footer)
-    readyToCollab: 'Spremni za saradnju?',
-    availableForProjects: 'Dostupni za projekte',
-    rightsReserved: '© 2026 WebEra. Sva prava zadržana.',
-  }
+    stat1: 'godine iskustva',
+    stat2: 'završenih projekata',
+    stat3: 'zadovoljnih klijenata',
+
+    // Kontakt
+    available: 'Dostupni za projekte',
+    contactTitle: 'Spremni za saradnju?',
+    whatsapp: 'Piši nam na WhatsApp',
+    email: 'Pošalji email',
+    rewind: 'Vrati vrijeme na početak',
+    rights: '© 2026 WebEra. Sva prava zadržana.',
+
+    // Poglavlja na vremenskoj liniji
+    chStart: 'Početak',
+    chIdea: 'Ideja',
+    chWork: 'Radovi',
+    chPrinciples: 'Principi',
+    chNumbers: 'Brojke',
+    chContact: 'Kontakt',
+    chBeyond: 'Van vremena',
+    timeline: 'Vremenska linija',
+  },
+  en: {
+    work: 'Work',
+    about: 'About',
+    contact: 'Contact',
+
+    loadingLabel: 'Loading',
+
+    slogan: 'Timeless design',
+    heroDesc: "Websites that don't age. And that sell.",
+    scrollHint: 'Scroll. Time is in your hands.',
+
+    manifestA: 'Trends pass.',
+    manifestB: 'Good design stays.',
+    manifestText:
+      'We build websites that last, that inspire and that deliver results, tailored exactly to what our clients want.',
+    manifestC: "We haven't been in the game for long.",
+    manifestD: 'But time is on our side.',
+
+    worksTitle: 'Selected work',
+    worksDesc: 'Every project is a story of its own.',
+    visitSite: 'Visit site',
+    view: 'Visit',
+    opensNewTab: 'opens in a new tab',
+    prevWork: 'Previous project',
+    nextWork: 'Next project',
+
+    principlesTitle: 'Why our design lasts',
+    p1Title: 'Speed and optimization',
+    p1Desc: 'Websites that load in the blink of an eye, with clean and optimized code.',
+    p2Title: 'Focus on conversions',
+    p2Desc: 'Design that is not just beautiful, but strategically guides the visitor to the goal.',
+    p3Title: 'Security and stability',
+    p3Desc: 'We use modern technologies that guarantee long-term stability.',
+    p4Title: 'Timeless design',
+    p4Desc: 'An aesthetic that does not chase short-lived trends, but lasts for years.',
+
+    statsTitle: 'By the numbers',
+    stat1: 'years of experience',
+    stat2: 'projects completed',
+    stat3: 'satisfied clients',
+
+    available: 'Available for projects',
+    contactTitle: 'Ready to work together?',
+    whatsapp: 'Message us on WhatsApp',
+    email: 'Send an email',
+    rewind: 'Rewind time to the start',
+    rights: '© 2026 WebEra. All rights reserved.',
+
+    chStart: 'Start',
+    chIdea: 'Idea',
+    chWork: 'Work',
+    chPrinciples: 'Principles',
+    chNumbers: 'Numbers',
+    chContact: 'Contact',
+    chBeyond: 'Beyond time',
+    timeline: 'Timeline',
+  },
 };
 
 type LanguageContextType = {
@@ -117,6 +145,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>('bs');
+
+  useEffect(() => {
+    document.documentElement.lang = language === 'bs' ? 'sr-Latn' : 'en';
+  }, [language]);
 
   const t = (key: string) => {
     return translations[language][key] || key;
