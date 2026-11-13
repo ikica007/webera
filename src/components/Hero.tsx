@@ -41,7 +41,7 @@ export function Hero({ entered }: { entered: boolean }) {
     }
     if (below.current) {
       below.current.style.opacity = (1 - ramp(0, 0.32, k)).toFixed(3);
-      below.current.style.transform = `translate3d(0, ${(-k * 9).toFixed(2)}vh, 0)`;
+      below.current.style.transform = `translate3d(0, ${(k * 3).toFixed(2)}vh, 0)`;
     }
     if (hint.current) hint.current.style.opacity = (1 - ramp(0, 0.12, k)).toFixed(3);
     if (tilt.current) {
@@ -67,13 +67,16 @@ export function Hero({ entered }: { entered: boolean }) {
             </span>
           </span>
         </h1>
-        <div className="hero-below" ref={below}>
-          <p className="hero-slogan hero-fade">{t("slogan")}</p>
-          <p className="hero-desc hero-fade">{t("heroDesc")}</p>
-        </div>
+      </div>
+      <div className="hero-below" ref={below}>
+        <p className="hero-slogan hero-fade">{t("slogan")}</p>
+        <p className="hero-desc hero-fade">{t("heroDesc")}</p>
       </div>
       <div className="hero-hint" ref={hint}>
-        <p className="hero-fade">{t("scrollHint")}</p>
+        <p className="hero-fade">
+          <span>{t("scrollShort")}</span>
+          <i aria-hidden="true" />
+        </p>
       </div>
     </section>
   );
