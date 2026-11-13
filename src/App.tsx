@@ -15,6 +15,7 @@ import { SelectedWorks } from "./components/SelectedWorks";
 import { Stats } from "./components/Stats";
 import { Contact } from "./components/Contact";
 import { CHAPTERS } from "./lib/engine";
+import { bindHoverScramble } from "./lib/scramble";
 
 /**
  * Sajt je jedan neprekidan kadar. Sve što se vidi stoji na ekranu (Backdrop +
@@ -44,6 +45,8 @@ export default function App() {
     window.addEventListener("resize", setUnit);
     return () => window.removeEventListener("resize", setUnit);
   }, []);
+
+  useEffect(() => bindHoverScramble(), []);
 
   // Dok traje učitavanje, skrol je zaključan.
   useEffect(() => {

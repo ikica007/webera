@@ -880,10 +880,10 @@
   place-items: center;
   background: var(--void);
   transition:
-    opacity 0.95s ease,
-    visibility 0s linear 0.95s;
+    opacity 0.8s ease,
+    visibility 0s linear 0.8s;
 }
-.loader.is-leaving {
+.loader.is-out {
   opacity: 0;
   visibility: hidden;
 }
@@ -895,24 +895,94 @@
   font-style: italic;
   font-size: 22px;
 }
-.loader-dial {
-  margin: 0;
+.loader-index {
+  position: absolute;
+  right: var(--pad);
+  top: 28px;
   font-family: var(--font-mono);
-  font-size: clamp(9px, 1.5vh, 14px);
-  line-height: 1.25;
-  letter-spacing: 0.08em;
-  color: #7fd0dc;
-  text-shadow: 0 0 12px rgba(127, 208, 220, 0.55);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(234, 241, 248, 0.5);
+}
+/* brojčanik: na kraju se okrene bočno i ostane samo linija */
+.loader-dial {
+  position: relative;
+  width: min(46vh, 70vw);
+  aspect-ratio: 1;
+  transition: transform 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.loader-dial svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transition: opacity 0.6s ease 0.25s;
+}
+.loader.is-turn .loader-dial svg,
+.loader.is-out .loader-dial svg {
+  opacity: 0;
+}
+.loader.is-turn .loader-dial,
+.loader.is-out .loader-dial {
+  transform: scaleX(0.02);
+}
+.loader-orbit {
+  fill: none;
+  stroke: rgba(234, 241, 248, 0.08);
+  stroke-width: 0.4;
+}
+.loader-tick {
+  stroke: rgba(234, 241, 248, 0.16);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  transition: stroke 0.5s ease;
+}
+.loader-tick.is-major {
+  stroke-width: 1;
+}
+.loader-tick.is-on {
+  stroke: var(--ice);
+  filter: drop-shadow(0 0 2px rgba(137, 170, 204, 0.9));
+}
+.loader-slit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 34%;
+  border-radius: 2px;
+  background: linear-gradient(transparent, var(--light) 30%, var(--light) 70%, transparent);
+  box-shadow: 0 0 18px 2px rgba(137, 170, 204, 0.6);
+  transform: translate(-50%, -50%);
+}
+.loader.is-turn .loader-slit,
+.loader.is-out .loader-slit {
+  transform: translate(-50%, -50%) scaleX(50);
+}
+.loader-slogan {
+  position: absolute;
+  left: var(--pad);
+  bottom: 22px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(16px, 1.5vw, 22px);
+  white-space: nowrap;
 }
 .loader-meta {
   position: absolute;
-  inset: auto 0 22px 0;
+  right: var(--pad);
+  bottom: 24px;
+  display: flex;
+  gap: 22px;
   margin: 0;
-  text-align: center;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(234, 241, 248, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.loader-meta > span:last-child {
   color: var(--steel);
 }
 
@@ -1042,6 +1112,16 @@
   }
   .work-pager span {
     min-width: 0;
+  }
+  .loader-index {
+    display: none;
+  }
+  .loader-slogan {
+    bottom: 54px;
+  }
+  .loader-meta {
+    left: var(--pad);
+    justify-content: space-between;
   }
   .hero-hint {
     bottom: 64px;
