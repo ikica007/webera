@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { LEN, START, clamp, local, ramp, reducedMotion, scrollToU, useFrame } from "../lib/engine";
 import { COUNT, domainOf, focusAt, pad, projects, trackAt, worksView } from "../lib/works";
 import { useLanguage } from "../context/LanguageContext";
+import { scramble } from "../lib/scramble";
 
 /**
  * Radovi: natpisi i listanje uz 3D panele. Same panele crta WebGL scena
@@ -41,7 +42,7 @@ export function SelectedWorks() {
     if (nearest !== current.current || !pagerName.current?.textContent) {
       current.current = nearest;
       if (pagerName.current) {
-        pagerName.current.textContent = `${pad(nearest + 1)}. ${projects[nearest].title}`;
+        scramble(pagerName.current, `${pad(nearest + 1)}. ${projects[nearest].title}`);
       }
     }
     captions.current.forEach((el, i) => {

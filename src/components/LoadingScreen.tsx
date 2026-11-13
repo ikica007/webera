@@ -1,61 +1,51 @@
 import { useEffect, useRef, useState } from "react";
 import { loadState } from "../lib/engine";
 import { useLanguage } from "../context/LanguageContext";
+import { scramble } from "../lib/scramble";
 
-const COLS = 35;
-const ROWS = 17;
+const TICKS = 60;
 
-/** Brojčanik od znakova: crtice se pale u smjeru kazaljke kako film stiže. */
-function dial(progress: number) {
-  const cx = (COLS - 1) / 2;
-  const cy = (ROWS - 1) / 2;
-  const label = String(Math.round(progress * 100)).padStart(3, "0");
-  let out = "";
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      const dx = (col - cx) * 0.5;
-      const dy = row - cy;
-      const distance = Math.hypot(dx, dy);
-      if (row === cy && Math.abs(col - cx) <= 1) {
-        out += label[col - cx + 1];
-      } else if (distance > 5.6 && distance < 8.2) {
-        const angle = (Math.atan2(dx, -dy) / (Math.PI * 2) + 1) % 1;
-        const tick = (row * 7 + col * 13) % 9 === 0;
-        out += angle <= progress ? (tick ? "0" : "|") : "·";
-      } else {
-        out += " ";
-      }
-    }
-    out += "\n";
-  }
-  return out;
-}
-
-/** Učitavanje: sat od znakova se puni dok kadrovi filma stižu. */
+/**
+ * Učitavanje: brojčanik sata bez kazaljki. Podioci se pale kako film stiže,
+ * a timecode broji do nule. Na kraju se brojčanik okrene bočno i postane
+ * svjetlosna linija iz koje počinje sajt.
+ */
 export function LoadingScreen({ onDone }: { onDone: () => void }) {
   const { t } = useLanguage();
-  const [leaving, setLeaving] = useState(false);
-  const face = useRef<HTMLPreElement>(null);
+  const [phase, setPhase] = useState<"load" | "turn" | "out">("load");
+  const ticks = useRef<(SVGLineElement | null)[]>([]);
+  const code = useRef<HTMLSpanElement>(null);
+  const percent = useRef<HTMLSpanElement>(null);
+  const slogan = useRef<HTMLParagraphElement>(null);
   const done = useRef(onDone);
   done.current = onDone;
 
   useEffect(() => {
+    scramble(slogan.current, t("slogan"), 1100);
     let raf = 0;
-    let timer = 0;
+    const timers: number[] = [];
     let shown = 0;
-    let last = -1;
+    let lit = -1;
     const began = performance.now();
     const tick = (now: number) => {
-      const target = loadState.ready ? 1 : Math.min(0.9, 0.04 + loadState.progress * 0.86);
-      shown += (target - shown) * 0.09;
-      const step = Math.round(shown * 100);
-      if (step !== last && face.current) {
-        last = step;
-        face.current.textContent = dial(step / 100);
+      const target = loadState.ready ? 1 : Math.min(0.92, 0.03 + loadState.progress * 0.9);
+      shown += (target - shown) * 0.08;
+      const on = Math.round(shown * TICKS);
+      if (on !== lit) {
+        for (let i = 0; i < TICKS; i++) ticks.current[i]?.classList.toggle("is-on", i < on);
+        lit = on;
       }
-      if (loadState.ready && shown > 0.985 && now - began > 1200) {
-        setLeaving(true);
-        timer = window.setTimeout(() => done.current(), 950);
+      // timecode broji unazad od 29 sekundi filma do nule
+      const left = (1 - shown) * 29.12;
+      const frames = Math.floor((left % 1) * 24);
+      if (code.current) {
+        code.current.textContent = `00:00:${String(Math.floor(left)).padStart(2, "0")}:${String(frames).padStart(2, "0")}`;
+      }
+      if (percent.current) percent.current.textContent = String(Math.round(shown * 100)).padStart(3, "0");
+      if (loadState.ready && shown > 0.985 && now - began > 1400) {
+        setPhase("turn");
+        timers.push(window.setTimeout(() => setPhase("out"), 900));
+        timers.push(window.setTimeout(() => done.current(), 1700));
         return;
       }
       raf = requestAnimationFrame(tick);
@@ -63,15 +53,51 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
     raf = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(raf);
-      window.clearTimeout(timer);
+      timers.forEach((id) => window.clearTimeout(id));
     };
   }, []);
 
   return (
-    <div className={leaving ? "loader is-leaving" : "loader"} role="status" aria-live="polite">
+    <div className={`loader is-${phase}`} role="status" aria-live="polite">
       <span className="loader-brand" aria-hidden="true">WebEra</span>
-      <pre className="loader-dial" ref={face} aria-hidden="true">{dial(0)}</pre>
-      <p className="loader-meta">{t("loadingLabel")}</p>
+      <span className="loader-index" aria-hidden="true">
+        N° 001 — {t("chStart")}
+      </span>
+
+      <div className="loader-dial" aria-hidden="true">
+        <svg viewBox="-100 -100 200 200">
+          <circle className="loader-orbit" r="74" />
+          {Array.from({ length: TICKS }, (_, i) => {
+            const a = (i / TICKS) * Math.PI * 2;
+            const major = i % 5 === 0;
+            const r0 = major ? 80 : 84;
+            const r1 = 90;
+            return (
+              <line
+                key={i}
+                ref={(el) => {
+                  ticks.current[i] = el;
+                }}
+                className={major ? "loader-tick is-major" : "loader-tick"}
+                x1={Math.sin(a) * r0}
+                y1={-Math.cos(a) * r0}
+                x2={Math.sin(a) * r1}
+                y2={-Math.cos(a) * r1}
+              />
+            );
+          })}
+        </svg>
+        <span className="loader-slit" />
+      </div>
+
+      <p className="loader-slogan" ref={slogan} />
+      <p className="loader-meta">
+        <span ref={code}>00:00:29:00</span>
+        <span>
+          <span ref={percent}>000</span> / 100
+        </span>
+      </p>
+      <span className="sr-only">{t("loadingLabel")}</span>
     </div>
   );
 }

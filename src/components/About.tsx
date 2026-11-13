@@ -55,7 +55,7 @@ export function About() {
   return (
     <section className="layer manifest">
       <div className="manifest-beat is-low" ref={beat1}>
-        <p className="manifest-label">01 — {t("chIdea")}</p>
+        <p className="manifest-label" data-scramble={`01 — ${t("chIdea")}`}>01 — {t("chIdea")}</p>
         <h2 className="manifest-line">
           <Line text={t("manifestA")} lineRef={set(0)} />
           <Line text={t("manifestB")} lineRef={set(1)} />
@@ -63,7 +63,7 @@ export function About() {
         <p className="manifest-text" ref={text}>{t("manifestText")}</p>
       </div>
       <div className="manifest-beat is-high" ref={beat2}>
-        <p className="manifest-label">02 — {t("chTime")}</p>
+        <p className="manifest-label" data-scramble={`02 — ${t("chTime")}`}>02 — {t("chTime")}</p>
         <p className="manifest-line">
           <Line text={t("manifestC")} lineRef={set(2)} />
           <Line text={t("manifestD")} lineRef={set(3)} />

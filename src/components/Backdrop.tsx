@@ -143,6 +143,11 @@ export function Backdrop() {
     const palette: [Color, Color, Color] = [[1, 1, 1], [1, 1, 1], [1, 1, 1]];
     const glow: [Color, Color] = [[0, 0, 0], [0, 0, 0]];
     let speed = 0;
+    // trag miša: kružni niz tačaka koje blijede
+    const trail = new Float32Array(36);
+    let head = 0;
+    let lastX = -1;
+    let lastY = -1;
 
     const unsubscribe = subscribe((frame) => {
       if (!loadState.ready) {
@@ -158,6 +163,21 @@ export function Backdrop() {
       const film = filmAt(u);
       if (pack.count) clock.duration = pack.duration;
       clock.time = film * clock.duration;
+
+      for (let i = 0; i < 12; i++) trail[i * 3 + 2] *= Math.exp(-frame.dt * 2.6);
+      if (pointer.active && !reducedMotion) {
+        const x = pointer.px / window.innerWidth;
+        const y = 1 - pointer.py / window.innerHeight;
+        const moved = Math.hypot(x - lastX, y - lastY);
+        if (moved > 0.012) {
+          trail[head * 3] = x;
+          trail[head * 3 + 1] = y;
+          trail[head * 3 + 2] = Math.min(1, 0.35 + moved * 9);
+          head = (head + 1) % 12;
+          lastX = x;
+          lastY = y;
+        }
+      }
 
       const target = clamp(Math.abs(frame.v) / 2.6);
       speed += (target - speed) * (1 - Math.exp(-frame.dt * 7));
@@ -284,6 +304,7 @@ export function Backdrop() {
           alpha: lerp(0.45 + 0.2 * open, 1, orbit) * (1 - flat * 0.45),
         },
         axisZ,
+        trail,
       });
     });
 

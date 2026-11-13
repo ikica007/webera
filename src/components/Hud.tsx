@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { CHAPTERS, START, TOTAL, clamp, clock, scrollToU, useFrame } from "../lib/engine";
 import { useLanguage } from "../context/LanguageContext";
+import { scramble } from "../lib/scramble";
 
 const two = (value: number) => String(Math.floor(value)).padStart(2, "0");
 
@@ -28,7 +29,10 @@ export function Hud({ entered }: { entered: boolean }) {
     let chapter: (typeof CHAPTERS)[number] = CHAPTERS[0];
     for (const item of CHAPTERS) if (u >= START[item.id] - 0.02) chapter = item;
     const name = translate.current(beyond ? "chBeyond" : chapter.label);
-    if (label.current && label.current.textContent !== name) label.current.textContent = name;
+    if (label.current && label.current.dataset.text !== name) {
+      label.current.dataset.text = name;
+      scramble(label.current, name);
+    }
 
     const k = clamp(p);
     if (marker.current) marker.current.style.top = `${(k * 100).toFixed(2)}%`;

@@ -31,11 +31,11 @@ export function Navbar({ entered }: { entered: boolean }) {
           </button>
         </span>
         <nav className="nav-pill" aria-label="Glavna navigacija">
-          <button type="button" onClick={() => scrollToU(START.work + focusAt(0) * LEN.work)}>
+          <button type="button" data-scramble={t("work")} onClick={() => scrollToU(START.work + focusAt(0) * LEN.work)}>
             {t("work")}
           </button>
           <i aria-hidden="true" />
-          <button type="button" onClick={() => scrollToU(START.contact + LEN.contact)}>
+          <button type="button" data-scramble={t("contact")} onClick={() => scrollToU(START.contact + LEN.contact)}>
             {t("contact")}
           </button>
         </nav>
