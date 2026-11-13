@@ -1,108 +1,79 @@
-import { useEffect, useRef } from "react";
-import Hls from "hls.js";
-import gsap from "gsap";
+import { useRef } from "react";
+import { clamp, pointer, ramp, reducedMotion, useFrame } from "../lib/engine";
 import { useLanguage } from "../context/LanguageContext";
 
-export function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const { language, t } = useLanguage();
+/**
+ * Početak: ime je podijeljeno svjetlosnim procjepom iz snimka.
+ * "Web" stoji lijevo od linije, "Era" desno. Skrol ih razmiče kao vrata
+ * i kamera prolazi između njih.
+ */
+export function Hero({ entered }: { entered: boolean }) {
+  const { t } = useLanguage();
+  const root = useRef<HTMLElement>(null);
+  const tilt = useRef<HTMLDivElement>(null);
+  const web = useRef<HTMLSpanElement>(null);
+  const era = useRef<HTMLSpanElement>(null);
+  const below = useRef<HTMLDivElement>(null);
+  const hint = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Setup HLS Video
-    const video = videoRef.current;
-    if (!video) return;
-
-    const videoSrc = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
-
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        startPosition: -1
-      });
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
-      });
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = videoSrc;
-      video.addEventListener("loadedmetadata", () => {
-        video.play().catch(() => {});
-      });
+  useFrame(({ u }) => {
+    const section = root.current;
+    if (!section) return;
+    if (u > 1.5) {
+      section.style.visibility = "hidden";
+      return;
     }
-  }, []);
-
-  useEffect(() => {
-    // GSAP Entrance
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    tl.fromTo(
-      ".name-reveal",
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1.2 },
-      0.1
-    ).fromTo(
-      ".blur-in",
-      { opacity: 0, filter: "blur(10px)", y: 20 },
-      { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1 },
-      0.3
-    );
-  }, []);
+    section.style.visibility = "visible";
+    if (reducedMotion) {
+      section.style.opacity = String(1 - ramp(0.5, 1.1, u));
+      return;
+    }
+    const k = clamp(u / 1.1);
+    const out = k * k * (3 - 2 * k);
+    const fade = (1 - ramp(0.18, 0.78, k)).toFixed(3);
+    const blur = k > 0.15 ? `blur(${((k - 0.15) * 14).toFixed(1)}px)` : "none";
+    const scale = (1 + out * 1.5).toFixed(3);
+    if (web.current && era.current) {
+      web.current.style.transform = `translate3d(${(-out * 44).toFixed(2)}vw, 0, 0) scale(${scale})`;
+      era.current.style.transform = `translate3d(${(out * 44).toFixed(2)}vw, 0, 0) scale(${scale})`;
+      web.current.style.opacity = era.current.style.opacity = fade;
+      web.current.style.filter = era.current.style.filter = blur;
+    }
+    if (below.current) {
+      below.current.style.opacity = (1 - ramp(0, 0.32, k)).toFixed(3);
+      below.current.style.transform = `translate3d(0, ${(-k * 9).toFixed(2)}vh, 0)`;
+    }
+    if (hint.current) hint.current.style.opacity = (1 - ramp(0, 0.12, k)).toFixed(3);
+    if (tilt.current) {
+      tilt.current.style.transform =
+        `rotateX(${(-pointer.y * 3).toFixed(3)}deg) rotateY(${(pointer.x * 4.5).toFixed(3)}deg)`;
+    }
+  });
 
   return (
-    <section id="hero" className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
-      {/* Background Video */}
-      <div className="absolute inset-0 w-full h-full">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute top-1/2 left-1/2 min-w-full min-h-full object-cover -translate-x-1/2 -translate-y-1/2"
-        />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-bg to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-4xl mx-auto mt-20">
-        <div className="blur-in text-xs text-muted uppercase tracking-[0.3em] mb-8">
-          COLLECTION '26
-        </div>
-        
-        <h1 className="name-reveal text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] tracking-tight text-text-primary mb-6 break-words px-4">
-          {t('name')}
+    <section ref={root} className={entered ? "layer hero is-entered" : "layer hero"}>
+      <div className="hero-tilt" ref={tilt}>
+        <h1 className="hero-title">
+          <span className="sr-only">WebEra. {t("slogan")}</span>
+          <span className="hero-half hero-web" ref={web} aria-hidden="true">
+            <span className="hero-mask">
+              <span className="hero-word">Web</span>
+            </span>
+          </span>
+          <span className="hero-gap" aria-hidden="true" />
+          <span className="hero-half hero-era" ref={era} aria-hidden="true">
+            <span className="hero-mask">
+              <span className="hero-word">Era</span>
+            </span>
+          </span>
         </h1>
-        
-        <div className="blur-in text-base sm:text-lg md:text-2xl text-text-primary mb-4 font-light">
-          <span className="font-display italic text-text-primary">{t('slogan')}</span>
-        </div>
-        
-        <p className="blur-in text-sm md:text-base text-muted max-w-md mb-12">
-          {t('heroDesc')}
-        </p>
-        
-        <div className="blur-in flex flex-col sm:flex-row gap-4 items-center">
-          <button className="group relative rounded-full text-sm px-7 py-3.5 hover:scale-105 transition-all bg-text-primary text-bg hover:bg-bg hover:text-text-primary border border-transparent hover:border-transparent">
-            <span className="absolute inset-[-2px] rounded-full bg-[linear-gradient(90deg,#89AACC_0%,#4E85BF_100%)] opacity-0 group-hover:opacity-100 transition-opacity -z-10 animate-gradient-shift bg-[length:200%_200%]" />
-            <div className="absolute inset-0 rounded-full group-hover:bg-bg transition-colors -z-10" />
-            {t('seeWorks')}
-          </button>
-          
-          <button className="group relative rounded-full text-sm px-7 py-3.5 hover:scale-105 transition-all border-2 border-stroke bg-bg text-text-primary hover:border-transparent">
-            <span className="absolute inset-[-2px] rounded-full bg-[linear-gradient(90deg,#89AACC_0%,#4E85BF_100%)] opacity-0 group-hover:opacity-100 transition-opacity -z-10 animate-gradient-shift bg-[length:200%_200%]" />
-            <div className="absolute inset-[2px] rounded-full group-hover:bg-bg transition-colors -z-10" />
-            {t('reachOut')}
-          </button>
+        <div className="hero-below" ref={below}>
+          <p className="hero-slogan hero-fade">{t("slogan")}</p>
+          <p className="hero-desc hero-fade">{t("heroDesc")}</p>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
-        <span className="text-xs text-muted uppercase tracking-[0.2em]">{t('scroll')}</span>
-        <div className="w-px h-10 bg-stroke relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-text-primary/50 animate-[scroll-down_1.5s_ease-in-out_infinite]" />
-        </div>
+      <div className="hero-hint" ref={hint}>
+        <p className="hero-fade">{t("scrollHint")}</p>
       </div>
     </section>
   );

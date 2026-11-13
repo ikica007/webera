@@ -1,99 +1,77 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { loadState } from "../lib/engine";
 import { useLanguage } from "../context/LanguageContext";
 
-interface LoadingScreenProps {
-  onComplete: () => void;
+const COLS = 35;
+const ROWS = 17;
+
+/** Brojčanik od znakova: crtice se pale u smjeru kazaljke kako film stiže. */
+function dial(progress: number) {
+  const cx = (COLS - 1) / 2;
+  const cy = (ROWS - 1) / 2;
+  const label = String(Math.round(progress * 100)).padStart(3, "0");
+  let out = "";
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const dx = (col - cx) * 0.5;
+      const dy = row - cy;
+      const distance = Math.hypot(dx, dy);
+      if (row === cy && Math.abs(col - cx) <= 1) {
+        out += label[col - cx + 1];
+      } else if (distance > 5.6 && distance < 8.2) {
+        const angle = (Math.atan2(dx, -dy) / (Math.PI * 2) + 1) % 1;
+        const tick = (row * 7 + col * 13) % 9 === 0;
+        out += angle <= progress ? (tick ? "0" : "|") : "·";
+      } else {
+        out += " ";
+      }
+    }
+    out += "\n";
+  }
+  return out;
 }
 
-const wordsEn = ["Design", "Create", "Inspire"];
-const wordsBs = ["Dizajniraj", "Stvori", "Inspiriši"];
-
-export function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [count, setCount] = useState(0);
-  const [wordIndex, setWordIndex] = useState(0);
-  const { language, t } = useLanguage();
-  const currentWords = language === 'bs' ? wordsBs : wordsEn;
-
-  useEffect(() => {
-    // Word cycler
-    const wordInterval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % currentWords.length);
-    }, 900);
-    return () => clearInterval(wordInterval);
-  }, [currentWords]);
+/** Učitavanje: sat od znakova se puni dok kadrovi filma stižu. */
+export function LoadingScreen({ onDone }: { onDone: () => void }) {
+  const { t } = useLanguage();
+  const [leaving, setLeaving] = useState(false);
+  const face = useRef<HTMLPreElement>(null);
+  const done = useRef(onDone);
+  done.current = onDone;
 
   useEffect(() => {
-    // Counter animation
-    let startTime: number | null = null;
-    const duration = 2700;
-    let animationFrameId: number;
-
-    const updateCounter = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      const percentage = Math.min((progress / duration) * 100, 100);
-      
-      setCount(Math.floor(percentage));
-
-      if (progress < duration) {
-        animationFrameId = requestAnimationFrame(updateCounter);
-      } else {
-        setTimeout(onComplete, 400); // Delay before completing
+    let raf = 0;
+    let timer = 0;
+    let shown = 0;
+    let last = -1;
+    const began = performance.now();
+    const tick = (now: number) => {
+      const target = loadState.ready ? 1 : Math.min(0.9, 0.04 + loadState.progress * 0.86);
+      shown += (target - shown) * 0.09;
+      const step = Math.round(shown * 100);
+      if (step !== last && face.current) {
+        last = step;
+        face.current.textContent = dial(step / 100);
       }
+      if (loadState.ready && shown > 0.985 && now - began > 1200) {
+        setLeaving(true);
+        timer = window.setTimeout(() => done.current(), 950);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
     };
-
-    animationFrameId = requestAnimationFrame(updateCounter);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [onComplete]);
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-bg flex flex-col justify-between p-8">
-      {/* Top Left Label */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-xs text-muted uppercase tracking-[0.3em]"
-      >
-        Portfolio
-      </motion.div>
-
-      {/* Center Rotating Word */}
-      <div className="flex-1 flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={wordIndex}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="text-4xl md:text-6xl lg:text-7xl font-display italic text-text-primary/80"
-          >
-            {currentWords[wordIndex]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="w-full flex flex-col items-end gap-4">
-        {/* Counter */}
-        <div className="text-6xl md:text-8xl lg:text-9xl font-display text-text-primary tabular-nums leading-none">
-          {String(count).padStart(3, "0")}
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="w-full h-[3px] bg-stroke/50 overflow-hidden rounded-full">
-          <div 
-            className="h-full accent-gradient origin-left"
-            style={{ 
-              transform: `scaleX(${count / 100})`,
-              boxShadow: "0 0 8px rgba(137, 170, 204, 0.35)"
-            }}
-          />
-        </div>
-      </div>
+    <div className={leaving ? "loader is-leaving" : "loader"} role="status" aria-live="polite">
+      <span className="loader-brand" aria-hidden="true">WebEra</span>
+      <pre className="loader-dial" ref={face} aria-hidden="true">{dial(0)}</pre>
+      <p className="loader-meta">{t("loadingLabel")}</p>
     </div>
   );
 }

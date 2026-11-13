@@ -1,242 +1,132 @@
-"use client";
+import { useRef } from "react";
+import { LEN, START, clamp, local, ramp, reducedMotion, scrollToU, useFrame } from "../lib/engine";
+import { COUNT, domainOf, focusAt, pad, projects, trackAt, worksView } from "../lib/works";
+import { useLanguage } from "../context/LanguageContext";
 
-import { cn } from "../../lib/utils";
-import { ArrowUpRight } from "lucide-react";
-import { useState } from "react";
+/**
+ * Radovi: natpisi i listanje uz 3D panele. Same panele crta WebGL scena
+ * (Backdrop), a lista projekata je u src/lib/works.ts.
+ */
+export function SelectedWorks() {
+  const { language, t } = useLanguage();
+  const head = useRef<HTMLElement>(null);
+  const pager = useRef<HTMLDivElement>(null);
+  const pagerName = useRef<HTMLSpanElement>(null);
+  const captions = useRef<(HTMLDivElement | null)[]>([]);
+  const hit = useRef<HTMLAnchorElement>(null);
+  const shownIndex = useRef(-1);
+  const current = useRef(0);
 
-export interface ElasticItemProps {
-  id: string;
-  title: string;
-  category: string;
-  src: string;
-  alt: string;
-  url?: string;
-  description?: string;
-}
+  const go = (step: number) => {
+    const next = clamp(current.current + step, 0, COUNT - 1);
+    scrollToU(START.work + focusAt(next) * LEN.work);
+  };
 
-const defaultItems: ElasticItemProps[] = [
-  {
-    id: "01",
-    title: "Montana Shop",
-    category: "E-Commerce",
-    src: "/montana-shop.png",
-    alt: "Montana Shop",
-    url: "https://montanashop.me",
-  },
-  {
-    id: "02",
-    title: "PowerM Max",
-    category: "Fitness & Brand",
-    src: "/powermax.png",
-    alt: "PowerM Max",
-    url: "https://powerm-max.vercel.app",
-  },
-  {
-    id: "03",
-    title: "Cvjećara Šćekić",
-    category: "Floral Boutique",
-    src: "/cvjecara.png",
-    alt: "Cvjećara Šćekić",
-    url: "https://www.cvjecarascekic.me/",
-  },
-  {
-    id: "04",
-    title: "PSC Knežević",
-    category: "Automotive Service",
-    src: "/psc-knezevic.png",
-    alt: "PSC Knežević",
-    url: "https://pscknezevicservis.me/",
-  },
-  {
-    id: "05",
-    title: "Vrata Radulović",
-    category: "Industrial & Doors",
-    src: "/doors-radulovic.png",
-    alt: "Vrata Radulović",
-    url: "https://vrata-radulovic.vercel.app/",
-  },
-  {
-    id: "06",
-    title: "HP Line",
-    category: "Transport & Logistics",
-    src: "/hp-line.png",
-    alt: "HP Line",
-    url: "https://hp-line.vercel.app/",
-  },
-  {
-    id: "07",
-    title: "Efen Izgradnja",
-    category: "Civil & Construction",
-    src: "/efen-izgradnja.png",
-    alt: "Efen Izgradnja",
-    url: "https://efen-izgradnja.vercel.app/",
-  },
-  {
-    id: "08",
-    title: "Void Webdesign",
-    category: "Design Agency",
-    src: "/void-webdesign.png",
-    alt: "Void Webdesign",
-    url: "https://void-webdesign.vercel.app/",
-  },
-];
+  useFrame(({ u }) => {
+    const w = local("work", u);
+    const on = ramp(-0.03, 0.02, w) * (1 - ramp(0.955, 0.995, w));
+    const visible = on > 0.004 ? "visible" : "hidden";
+    if (head.current) {
+      // naslov poglavlja se sklanja čim prvi projekat dođe u fokus
+      const intro = on * (1 - ramp(0.05, 0.1, w));
+      head.current.style.opacity = intro.toFixed(3);
+      head.current.style.visibility = intro > 0.004 ? "visible" : "hidden";
+    }
+    const track = trackAt(w);
+    const nearest = clamp(Math.round(track), 0, COUNT - 1);
+    if (pager.current) {
+      pager.current.style.opacity = on.toFixed(3);
+      pager.current.style.visibility = visible;
+    }
+    if (nearest !== current.current || !pagerName.current?.textContent) {
+      current.current = nearest;
+      if (pagerName.current) {
+        pagerName.current.textContent = `${pad(nearest + 1)}. ${projects[nearest].title}`;
+      }
+    }
+    captions.current.forEach((el, i) => {
+      if (!el) return;
+      const d = track - i;
+      const opacity = (1 - ramp(0.18, 0.44, Math.abs(d))) * on;
+      if (opacity < 0.004) {
+        if (el.style.visibility !== "hidden") el.style.visibility = "hidden";
+        return;
+      }
+      el.style.visibility = "visible";
+      el.style.opacity = opacity.toFixed(3);
+      el.style.pointerEvents = opacity > 0.6 ? "auto" : "none";
+      if (!reducedMotion) el.style.transform = `translate3d(0, ${(-d * 46).toFixed(1)}px, 0)`;
+    });
 
-interface ElasticGalleryProps {
-  items?: ElasticItemProps[];
-  className?: string;
-  viewLabel?: string;
-}
-
-export function ElasticGallery({
-  items = defaultItems,
-  className,
-  viewLabel = "Posjeti sajt",
-}: ElasticGalleryProps) {
-  const [activeId, setActiveId] = useState<string | null>(items[0]?.id || "01");
+    // Nevidljivi link preko panela u fokusu: klik na sajt otvara sajt.
+    const link = hit.current;
+    if (!link) return;
+    const rect = worksView.rect;
+    if (rect && on > 0.5) {
+      link.style.display = "block";
+      link.style.transform = `translate3d(${rect.x.toFixed(1)}px, ${rect.y.toFixed(1)}px, 0)`;
+      link.style.width = `${rect.w.toFixed(1)}px`;
+      link.style.height = `${rect.h.toFixed(1)}px`;
+      if (shownIndex.current !== worksView.active) {
+        shownIndex.current = worksView.active;
+        link.href = projects[worksView.active].url;
+      }
+    } else if (link.style.display !== "none") {
+      link.style.display = "none";
+    }
+  });
 
   return (
-    <div className={cn("w-full py-4 md:py-6", className)}>
-      {/* Container: Fiksna visina na desktopu, adaptivna na mobitelima */}
-      <div className="mx-auto flex h-[620px] w-full flex-col gap-2 sm:gap-2.5 md:h-[560px] lg:h-[620px] md:flex-row md:gap-3">
-        {items.map((item) => {
-          const isActive = activeId === item.id;
+    <section className="layer works">
+      <header className="works-head" ref={head}>
+        <h2 className="section-title">{t("worksTitle")}</h2>
+        <p>{t("worksDesc")}</p>
+      </header>
 
-          return (
-            <div
-              key={item.id}
-              onMouseEnter={() => setActiveId(item.id)}
-              onClick={() => {
-                if (!isActive) {
-                  setActiveId(item.id);
-                } else if (item.url) {
-                  window.open(item.url, "_blank", "noopener,noreferrer");
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setActiveId(item.id);
-                }
-              }}
-              className={cn(
-                "group relative cursor-pointer overflow-hidden rounded-2xl border border-stroke bg-surface",
-                // Tranzicija za širenje/skupljanje
-                "transition-[flex,filter] duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]",
-                // Aktivna kartica zauzima veći dio, neaktivne se skupljaju
-                isActive ? "flex-[4] md:flex-[4.2]" : "flex-[1]",
-                // Osvjetljenje
-                isActive
-                  ? "brightness-100 ring-1 ring-white/20 shadow-2xl"
-                  : "brightness-[0.4] hover:brightness-75"
-              )}
-            >
-              {/* Background slika */}
-              <div className="absolute inset-0 h-full w-full overflow-hidden">
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className={cn(
-                    "h-full w-full object-cover object-top transition-transform duration-1000",
-                    isActive ? "scale-100" : "scale-110"
-                  )}
-                />
-
-                {/* Halftone tačkasti overlay */}
-                <div
-                  className="absolute inset-0 opacity-20 mix-blend-multiply pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle, #000 1px, transparent 1px)",
-                    backgroundSize: "4px 4px",
-                  }}
-                />
-
-                {/* Gradijent za čitljivost teksta */}
-                <div
-                  className={cn(
-                    "absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 transition-opacity duration-500",
-                    isActive ? "opacity-100" : "opacity-70"
-                  )}
-                />
-              </div>
-
-              {/* Sadržaj kartice */}
-              <div className="absolute bottom-0 left-0 right-0 flex h-full flex-col justify-end p-4 sm:p-5 md:p-6 lg:p-8">
-                {/* Aktivni sadržaj (prikazuje se kad je otvorena) */}
-                <div
-                  className={cn(
-                    "flex flex-col gap-2 transition-all duration-500 z-10",
-                    isActive
-                      ? "translate-y-0 opacity-100 delay-150"
-                      : "translate-y-8 opacity-0 pointer-events-none"
-                  )}
-                >
-                  {/* Kategorija i redni broj */}
-                  <div className="flex items-center gap-2.5">
-                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-xs font-medium uppercase tracking-wider text-white backdrop-blur-md">
-                      {item.category}
-                    </span>
-                    <span className="text-white/40 text-xs font-mono">
-                      {item.id} / 0{items.length}
-                    </span>
-                  </div>
-
-                  {/* Naslov */}
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white font-display italic leading-none">
-                    {item.title}
-                  </h3>
-
-                  {/* Dugme za posjetu */}
-                  {item.url && (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-2 sm:mt-3 inline-flex items-center gap-2.5 rounded-full bg-white/10 border border-white/20 hover:bg-white hover:text-black px-4 py-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-white transition-all w-fit group/btn backdrop-blur-sm"
-                    >
-                      <span>{viewLabel}</span>
-                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                    </a>
-                  )}
-                </div>
-
-                {/* Neaktivni sadržaj (vertikalni tekst na desktopu) */}
-                <div
-                  className={cn(
-                    "absolute transition-all duration-500 pointer-events-none z-10",
-                    "bottom-3 left-1/2 -translate-x-1/2 md:bottom-6",
-                    isActive ? "opacity-0 scale-50" : "opacity-100 delay-200"
-                  )}
-                >
-                  {/* Desktop: Vertikalni naslov */}
-                  <div className="hidden whitespace-nowrap text-xs md:text-sm font-bold uppercase tracking-[0.25em] text-white/80 [writing-mode:vertical-rl] rotate-180 md:flex items-center gap-3">
-                    <span className="text-[10px] text-white/40 font-mono">
-                      {item.id}
-                    </span>
-                    <span className="font-display italic tracking-wide">
-                      {item.title}
-                    </span>
-                  </div>
-
-                  {/* Mobile: Horizontalni naslov */}
-                  <div className="flex items-center gap-2 text-xs font-medium text-white/90 md:hidden">
-                    <span className="text-[10px] text-white/40 font-mono">
-                      {item.id}
-                    </span>
-                    <span className="truncate max-w-[180px] font-display italic text-sm">
-                      {item.title}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="work-pager" ref={pager}>
+        <button type="button" onClick={() => go(-1)} aria-label={t("prevWork")}>
+          &lt;&lt;
+        </button>
+        <span ref={pagerName} />
+        <button type="button" onClick={() => go(1)} aria-label={t("nextWork")}>
+          &gt;&gt;
+        </button>
       </div>
-    </div>
+
+      <a
+        ref={hit}
+        className="work-hit"
+        href={projects[0].url}
+        target="_blank"
+        rel="noopener noreferrer"
+        tabIndex={-1}
+        aria-hidden="true"
+      />
+
+      {projects.map((project, i) => (
+        <div
+          key={project.title}
+          className="work-caption"
+          ref={(el) => {
+            captions.current[i] = el;
+          }}
+        >
+          <div className="work-meta">
+            <p className="work-count">
+              <span>{pad(i + 1)}</span> / {pad(COUNT)}
+            </p>
+            <h3>{project.title}</h3>
+            <p className="work-cat">
+              {project.category[language]}
+              <span>{domainOf(project.url)}</span>
+            </p>
+          </div>
+          <a className="btn btn-line" href={project.url} target="_blank" rel="noopener noreferrer">
+            {t("visitSite")} <span aria-hidden="true">↗</span>
+            <span className="sr-only"> ({t("opensNewTab")})</span>
+          </a>
+        </div>
+      ))}
+    </section>
   );
 }
-
-export default ElasticGallery;
