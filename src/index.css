@@ -431,7 +431,7 @@
   align-items: flex-start;
 }
 .manifest-beat.is-high {
-  top: clamp(110px, 17vh, 170px);
+  top: clamp(150px, 24vh, 230px);
   align-items: flex-end;
   text-align: right;
 }
@@ -464,7 +464,11 @@
 .mask-row {
   display: block;
   overflow: hidden;
-  padding: 0.04em 0.12em 0.1em 0;
+  padding: 0.14em 0.14em 0.08em 0;
+  margin-top: -0.1em;
+}
+.is-high .manifest-line {
+  font-size: clamp(30px, 4.6vw, 84px);
 }
 .mask-line {
   display: block;
