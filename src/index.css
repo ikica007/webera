@@ -230,6 +230,7 @@
   text-transform: uppercase;
 }
 .nav-pill::after {
+  display: none;
   content: "";
   position: absolute;
   inset: auto 18% -9px 18%;
@@ -253,7 +254,6 @@
 }
 .nav-pill button:hover {
   color: var(--light);
-  text-shadow: 0 0 14px rgba(137, 210, 220, 0.9);
 }
 .nav-lang {
   display: inline-flex;
@@ -333,35 +333,68 @@
 .hero.is-entered .hero-word {
   transform: none;
 }
+/* slogan dolje lijevo, opis dolje desno: kao potpis na plakatu */
 .hero-below {
   position: absolute;
-  inset: calc(50% + max(var(--hero-size) * 0.68, 14.5vh)) 0 auto 0;
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-  padding: 0 var(--pad);
-  text-align: center;
+  inset: auto var(--pad) 92px var(--pad);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
 }
 .hero-slogan {
   margin: 0;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(20px, 2.5vw, 40px);
+  font-size: clamp(18px, 1.9vw, 30px);
 }
 .hero-desc {
   margin: 0;
-  font-size: clamp(15px, 1.25vw, 20px);
-  color: rgba(234, 241, 248, 0.72);
+  max-width: 22ch;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: right;
+  color: rgba(234, 241, 248, 0.68);
 }
 .hero-hint {
   position: absolute;
-  inset: auto 0 76px 0;
-  text-align: center;
-  font-size: 14px;
-  color: rgba(234, 241, 248, 0.7);
+  inset: auto 0 30px 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 .hero-hint p {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(234, 241, 248, 0.55);
+}
+.hero-hint i {
+  position: relative;
+  width: 1px;
+  height: 34px;
+  overflow: hidden;
+  background: rgba(234, 241, 248, 0.14);
+}
+.hero-hint i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ice);
+  transform: translateY(-100%);
+  animation: hint-drop 2.4s var(--ease-out) infinite;
+}
+@keyframes hint-drop {
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
 }
 .hero-fade {
   opacity: 0;
@@ -386,34 +419,65 @@
 
 .manifest-beat {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  padding: 0 max(var(--pad), 7vw);
-  text-align: center;
+  left: var(--pad);
+  right: calc(var(--pad) + 28px);
+  display: flex;
+  flex-direction: column;
   visibility: hidden;
+}
+/* prva misao dolje lijevo, druga gore desno */
+.manifest-beat.is-low {
+  bottom: clamp(84px, 13vh, 130px);
+  align-items: flex-start;
+}
+.manifest-beat.is-high {
+  top: clamp(110px, 17vh, 170px);
+  align-items: flex-end;
+  text-align: right;
+}
+.manifest-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+.manifest-label::after {
+  content: "";
+  width: 48px;
+  height: 1px;
+  background: rgba(137, 170, 204, 0.6);
 }
 .manifest-line {
   margin: 0;
-  text-shadow: 0 2px 26px rgba(3, 5, 8, 0.75), 0 0 4px rgba(3, 5, 8, 0.35);
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(28px, 5.4vw, 92px);
-  line-height: 1.14;
-  text-wrap: balance;
+  font-size: clamp(34px, 6.4vw, 112px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
 }
-.manifest-row {
+.mask-row {
   display: block;
+  overflow: hidden;
+  padding: 0.04em 0.12em 0.1em 0;
+}
+.mask-line {
+  display: block;
+  transform: translate3d(0, 112%, 0);
+  will-change: transform;
 }
 .manifest-text {
-  max-width: 620px;
-  text-shadow: 0 1px 16px rgba(3, 5, 8, 0.9);
-  margin: 3.2vh 0 0;
-  font-size: clamp(15px, 1.25vw, 19px);
-  line-height: 1.65;
-  color: rgba(234, 241, 248, 0.82);
+  align-self: flex-end;
+  max-width: 34ch;
+  margin: -1.6em 0 0;
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.6;
+  color: rgba(234, 241, 248, 0.78);
   opacity: 0;
 }
 
@@ -848,58 +912,49 @@
   color: var(--steel);
 }
 
-/* ---------- Prsten uz miš ---------- */
+/* ---------- Natpis uz miš ---------- */
 
-.cursor {
+.cursor-tag {
   position: fixed;
-  left: 0;
-  top: 0;
+  left: 18px;
+  top: 14px;
   z-index: 20;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  margin: -17px 0 0 -17px;
-  border: 1px solid rgba(234, 241, 248, 0.45);
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    width 0.4s var(--ease-out),
-    height 0.4s var(--ease-out),
-    margin 0.4s var(--ease-out),
-    background-color 0.3s ease,
-    border-color 0.3s ease;
-}
-.cursor span {
+  padding: 7px 11px;
+  border: 1px solid rgba(234, 241, 248, 0.28);
+  border-radius: 4px;
+  background: rgba(5, 6, 8, 0.72);
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   white-space: nowrap;
-  color: var(--void);
+  color: var(--ice);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
-.cursor.is-link {
-  width: 56px;
-  height: 56px;
-  margin: -28px 0 0 -28px;
-  border-color: var(--steel);
-}
-.cursor.is-view {
-  width: 104px;
-  height: 104px;
-  margin: -52px 0 0 -52px;
-  border-color: var(--ice);
-  background: var(--ice);
-}
-.cursor.is-view span {
+.cursor-tag.is-on {
   opacity: 1;
 }
 
 /* ---------- Uski ekrani (telefon, tablet uspravno) ---------- */
 
 @media (max-aspect-ratio: 9/10) {
+  .manifest-beat.is-low {
+    bottom: clamp(70px, 11vh, 110px);
+  }
+  .manifest-text {
+    align-self: flex-start;
+    margin-top: 18px;
+  }
+  .hero-below {
+    bottom: 132px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-desc {
+    text-align: left;
+  }
   .work-caption {
     right: var(--pad);
     bottom: clamp(70px, 11vh, 120px);
