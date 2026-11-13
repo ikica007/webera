@@ -182,13 +182,12 @@ export function rewind() {
 }
 
 /**
- * Sadržaj dolazi iz dubine, zastane u fokusu, pa proleti pored kamere.
- * k: -1 (daleko) → 0 (fokus) → 1 (prošao).
+ * Mirni ulaz i izlaz bloka: lagano klizi odozdo, zastane, pa ode gore.
+ * k: -1 (prije) → 0 (u fokusu) → 1 (prošao).
  */
-export function fly(el: HTMLElement | null, k: number, strength = 1) {
+export function fly(el: HTMLElement | null, k: number, _strength = 1) {
   if (!el) return;
-  const distance = Math.abs(k);
-  const opacity = 1 - ramp(0.3, 1, distance);
+  const opacity = 1 - ramp(0.35, 1, Math.abs(k));
   if (opacity < 0.004) {
     if (el.style.visibility !== "hidden") el.style.visibility = "hidden";
     return;
@@ -196,8 +195,15 @@ export function fly(el: HTMLElement | null, k: number, strength = 1) {
   el.style.visibility = "visible";
   el.style.opacity = opacity.toFixed(3);
   if (reducedMotion) return;
-  const scale = k < 0 ? 1 + k * 0.4 * strength : 1 + (k * 0.35 + k * k * 1.5) * strength;
-  el.style.transform = `translate3d(0, ${(-k * 3).toFixed(2)}vh, 0) scale(${scale.toFixed(4)})`;
-  const blur = finePointer && distance > 0.18 ? (distance - 0.18) * 16 : 0;
-  el.style.filter = blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : "none";
+  el.style.transform = `translate3d(0, ${(-k * 4).toFixed(2)}vh, 0)`;
+}
+
+/**
+ * Red teksta izlazi iz maske odozdo i odlazi gore, kao u montaži.
+ * k: -1 (ispod maske) → 0 (vidljiv) → 1 (iznad maske).
+ */
+export function reveal(el: HTMLElement | null, k: number) {
+  if (!el) return;
+  const y = k < 0 ? -k * 112 : -k * 112;
+  el.style.transform = reducedMotion ? "none" : `translate3d(0, ${y.toFixed(2)}%, 0)`;
 }
