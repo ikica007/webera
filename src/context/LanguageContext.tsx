@@ -23,6 +23,7 @@ const translations: Translations = {
     slogan: 'Dizajn van vremena',
     heroDesc: 'Sajtovi koji ne stare. I koji prodaju.',
     scrollHint: 'Skroluj. Vrijeme je u tvojim rukama.',
+    scrollShort: 'Skroluj',
 
     // Ideja
     manifestA: 'Trendovi prolaze.',
@@ -69,6 +70,7 @@ const translations: Translations = {
     // Poglavlja na vremenskoj liniji
     chStart: 'Početak',
     chIdea: 'Ideja',
+    chTime: 'Vrijeme',
     chWork: 'Radovi',
     chPrinciples: 'Principi',
     chNumbers: 'Brojke',
@@ -86,6 +88,7 @@ const translations: Translations = {
     slogan: 'Timeless design',
     heroDesc: "Websites that don't age. And that sell.",
     scrollHint: 'Scroll. Time is in your hands.',
+    scrollShort: 'Scroll',
 
     manifestA: 'Trends pass.',
     manifestB: 'Good design stays.',
@@ -126,6 +129,7 @@ const translations: Translations = {
 
     chStart: 'Start',
     chIdea: 'Idea',
+    chTime: 'Time',
     chWork: 'Work',
     chPrinciples: 'Principles',
     chNumbers: 'Numbers',
