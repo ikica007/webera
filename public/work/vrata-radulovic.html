@@ -11,10 +11,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#050608" />
     <title>Vrata Radulović: sobna i ulazna vrata | Studija slučaja | WebEra</title>
-    <meta name="description" content="Sajt za firmu koja prodaje i ugrađuje sobna i ulazna vrata. Pogledajte šta je WebEra napravio za Vrata Radulović." />
+    <meta name="description" content="Sajt za firmu koja preko tri decenije prodaje i ugrađuje sobna i ulazna vrata. Pogledajte šta je WebEra napravio za Vrata Radulović." />
     <link rel="canonical" href="https://webera.website/work/vrata-radulovic" />
     <meta property="og:title" content="Vrata Radulović: sobna i ulazna vrata | Studija slučaja | WebEra" />
-    <meta property="og:description" content="Sajt za firmu koja prodaje i ugrađuje sobna i ulazna vrata. Pogledajte šta je WebEra napravio za Vrata Radulović." />
+    <meta property="og:description" content="Sajt za firmu koja preko tri decenije prodaje i ugrađuje sobna i ulazna vrata. Pogledajte šta je WebEra napravio za Vrata Radulović." />
     <meta property="og:url" content="https://webera.website/work/vrata-radulovic" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="sr_ME" />
@@ -23,6 +23,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,28 +48,40 @@
       <section class="hero">
         <p class="label">Studija slučaja · Sobna i ulazna vrata</p>
         <h1>Vrata Radulović</h1>
-        <p class="lead">Sajt za firmu koja prodaje i ugrađuje sobna i ulazna vrata.</p>
+        <p class="lead">Sajt za firmu koja preko tri decenije prodaje i ugrađuje sobna i ulazna vrata.</p>
       </section>
       <figure class="cover"><img src="/works/doors-radulovic.webp" alt="Vrata Radulović, sajt za sobna i ulazna vrata, izradio WebEra" width="1600" height="866" fetchpriority="high" /></figure>
       <section class="block">
         <h2>Klijent</h2>
-        <p>Vrata Radulović (Doors Lux &amp; Bonvivan) nudi sobna i ulazna vrata za stanove, kuće i poslovne prostore.</p>
+        <p>Vrata Radulović (Doors Lux &amp; Bonvivan) preko 30 godina nudi sobna i ulazna vrata za stanove, kuće i poslovne prostore.</p>
+      </section>
+      <section class="block">
+        <h2>Izazov</h2>
+        <p>Firma je dobro poznata i iskusna, ali bez sajta nije imala mjesto gdje novi kupci mogu vidjeti ponudu i nivo firme.</p>
       </section>
       <section class="block">
         <h2>Cilj</h2>
-        <p>Da modeli vrata izgledaju onako kako izgledaju uživo: luksuzno, u tamnoj atmosferi sa toplim svjetlom.</p>
+        <p>Sajt koji firmi daje ozbiljnost i nivo kakav ima uživo, i otvara još jedan kanal preko kojeg kupci dolaze.</p>
+      </section>
+      <section class="block">
+        <h2>Pristup i dizajn</h2>
+        <ul class="ticks"><li>Tamni, filmski dizajn sa toplim svjetlom, da vrata izgledaju luksuzno</li><li>Fokus na fotografijama modela</li><li>Poziv na upit na svakom koraku</li></ul>
       </section>
       <section class="block">
         <h2>Šta smo napravili</h2>
-        <ul class="ticks"><li>Tamni, filmski dizajn sa fokusom na fotografije vrata</li><li>Pregled modela sobnih i ulaznih vrata</li><li>Kontakt i poziv na upit na svakom koraku</li><li>Sopstveni domen i objavu sajta</li></ul>
+        <ul class="ticks"><li>Pregled modela sobnih i ulaznih vrata</li><li>Kontakt i upit za ponudu</li><li>Sopstveni domen i objava sajta</li></ul>
       </section>
       <section class="block">
         <h2>Tehnologije</h2>
         <p>React, Vercel</p>
       </section>
       <section class="block">
+        <h2>Rezultat</h2>
+        <p>Firma sa tri decenije iskustva sada i online izgleda kao premium ponuđač, i ima novi kanal za kupce.</p>
+      </section>
+      <section class="block">
         <h2>Pogledajte uživo</h2>
-        <p><a class="btn line" href="https://vrata-radulovic.vercel.app/" target="_blank" rel="noopener">Posjeti Vrata Radulović ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a> ili <a href="/services">naše usluge</a>.</p>
+        <p><a class="btn line" href="https://vrata-radulovic.vercel.app/" target="_blank" rel="noopener">Posjeti Vrata Radulović ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a>, <a href="/services">naše usluge</a> ili <a href="/contact">zatražite ponudu za svoj sajt</a>.</p>
       </section>
     </main>
     <footer class="foot">
@@ -92,5 +105,15 @@
       </nav>
       <p class="fine">© 2026 WebEra · Podgorica, Crna Gora · Dizajn van vremena</p>
     </footer>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
   </body>
 </html>
