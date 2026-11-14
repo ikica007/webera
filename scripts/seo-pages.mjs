@@ -94,6 +94,7 @@ function page({ path, title, description, crumbs, body, schema = [] }) {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -134,6 +135,16 @@ ${body}
       </nav>
       <p class="fine">© ${new Date().getFullYear()} WebEra · Podgorica, Crna Gora · Dizajn van vremena</p>
     </footer>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
   </body>
 </html>
 `;
@@ -158,12 +169,12 @@ const block = (title, html, id = "") => `      <section class="block"${id ? ` id
 
 const PROJECTS = [
   { slug: "montana", title: "Montana Shop", cat: "Online prodavnica muške mode", img: "/works/montana-shop.webp", url: "https://montanashop.me", alt: "Montana Shop, online prodavnica muške mode iz Crne Gore, sajt izradio WebEra", study: true },
-  { slug: "powerm-max", title: "PowerM Max", cat: "Klima uređaji i toplotne pumpe", img: "/works/powermax.webp", url: "https://powerm-max.vercel.app", alt: "PowerM Max, sajt za klima uređaje i toplotne pumpe, izradio WebEra", study: true },
-  { slug: "cvjecara-scekic", title: "Cvjećara Šćekić", cat: "Cvjećara sa online naručivanjem", img: "/works/cvjecara.webp", url: "https://www.cvjecarascekic.me/", alt: "Cvjećara Šćekić, sajt cvjećare sa online naručivanjem, izradio WebEra", study: true },
-  { slug: "psc-knezevic", title: "PSC Knežević", cat: "Auto servis", img: "/works/psc-knezevic.webp", url: "https://pscknezevicservis.me/", alt: "PSC Knežević, sajt auto servisa, izradio WebEra" },
+  { slug: "powerm-max", title: "PowerM Max", cat: "Klima uređaji i toplotne pumpe", img: "/works/powermax.webp", url: "https://powerm-max.vercel.app", alt: "PowerM Max, sajt za montažu i održavanje klima uređaja, izradio WebEra", study: true },
+  { slug: "cvjecara-scekic", title: "Cvjećara Šćekić", cat: "Cvjećara sa online naručivanjem", img: "/works/cvjecara.webp", url: "https://www.cvjecarascekic.me/", alt: "Cvjećara Šćekić, sajt cvjećare sa online naručivanjem i plaćanjem karticom, izradio WebEra", study: true },
+  { slug: "psc-knezevic", title: "PSC Knežević", cat: "Ovlašćeni Peugeot servis", img: "/works/psc-knezevic.webp", url: "https://pscknezevicservis.me/", alt: "PSC Knežević, sajt ovlašćenog Peugeot servisa u Crnoj Gori, izradio WebEra", study: true },
   { slug: "vrata-radulovic", title: "Vrata Radulović", cat: "Sobna i ulazna vrata", img: "/works/doors-radulovic.webp", url: "https://vrata-radulovic.vercel.app/", alt: "Vrata Radulović, sajt za sobna i ulazna vrata, izradio WebEra", study: true },
-  { slug: "hp-line", title: "HP Line", cat: "Namještaj po mjeri", img: "/works/hp-line.webp", url: "https://hp-line.vercel.app/", alt: "HP Line, sajt za namještaj po mjeri, izradio WebEra" },
-  { slug: "efen-izgradnja", title: "Efen Izgradnja", cat: "Građevina", img: "/works/efen-izgradnja.webp", url: "https://efen-izgradnja.vercel.app/", alt: "Efen Izgradnja, sajt građevinske firme, izradio WebEra" },
+  { slug: "hp-line", title: "HP Line", cat: "Obrada pločastih materijala", img: "/works/hp-line.webp", url: "https://hp-line.vercel.app/", alt: "HP Line, sajt firme za obradu pločastih materijala u Crnoj Gori, izradio WebEra", study: true },
+  { slug: "efen-izgradnja", title: "Efen Izgradnja", cat: "Građevinski materijal i izvođenje radova", img: "/works/efen-izgradnja.webp", url: "https://efen-izgradnja.vercel.app/", alt: "Efen Izgradnja, sajt za prodaju građevinskog materijala i izvođenje radova, izradio WebEra", study: true },
   { slug: "void-webdesign", title: "Void Webdesign", cat: "Web studio", img: "/works/void-webdesign.webp", url: "https://void-webdesign.vercel.app/", alt: "Void Webdesign, eksperimentalni 3D sajt web studija, izradio WebEra" },
 ];
 
@@ -180,62 +191,139 @@ const grid = (items) => `<ul class="grid">
         ${items.map(card).join("\n        ")}
       </ul>`;
 
+/*
+ * Studije slučaja. Struktura: klijent, izazov, cilj, pristup, šta je napravljeno,
+ * tehnologije i rezultat. Rezultat je samo ono što se stvarno promijenilo, bez brojeva
+ * koje nemamo.
+ */
 const STUDIES = {
   montana: {
-    lead: "Online prodavnica porodičnog brenda muške mode koji postoji od 1993. godine, sa prodavnicama u Bijelom Polju i Podgorici.",
-    sections: [
-      ["Klijent", "<p>Montana je porodični brend muške mode iz Crne Gore, osnovan 1993. godine. Pored svoje kolekcije prodaje i brendove kao što su Beverly Hills Polo Club, Tom Tailor, Fred Mello, Rifle i Navigare.</p>"],
-      ["Cilj", "<p>Da kupci iz cijele Crne Gore mogu pregledati i naručiti artikle iz prodavnica online, uz katalog koji je lako pretraživati po kategorijama, veličinama i bojama.</p>"],
-      ["Šta smo napravili", list([
-        "Online prodavnicu na WordPress i WooCommerce platformi",
-        "Katalog podijeljen na odjeću, obuću i aksesoare",
-        "Filtere po veličini i boji i brzu pretragu artikala",
-        "Navigaciju sa krugovima kategorija, inspirisanu velikim modnim brendovima",
-        "Fotografije artikala i opise proizvoda, uz osnovni tehnički SEO i Google Search Console",
-      ])],
+    lead: "Redizajn sajta i pokretanje online prodaje za porodični brend muške mode koji postoji od 1993. godine, sa prodavnicama u Bijelom Polju i Podgorici.",
+    client: "Montana je porodični brend muške mode iz Crne Gore, osnovan 1993. godine. Pored svoje kolekcije prodaje i brendove kao što su Beverly Hills Polo Club, Tom Tailor, Fred Mello, Rifle i Navigare.",
+    challenge: "Brend je imao sajt, ali bez online prodaje. Kupci su mogli vidjeti ponudu samo u radnjama, a kolekcije se mijenjaju svake sezone.",
+    goal: "Da kupci iz cijele Crne Gore mogu pregledati i naručiti artikle online, i da se nove kolekcije redovno pojavljuju na sajtu.",
+    approach: [
+      "Kompletan redizajn sajta, čist i moderan, u skladu sa brendom",
+      "Navigacija sa krugovima kategorija, inspirisana velikim modnim brendovima",
+      "Katalog podijeljen na odjeću, obuću i aksesoare",
+    ],
+    built: [
+      "Online prodavnica na WordPress i WooCommerce platformi",
+      "Filteri po veličini i boji i brza pretraga artikala",
+      "Unos artikala sa fotografijama i opisima",
+      "Osnovni tehnički SEO i Google Search Console",
+      "Stalno održavanje: sajt se redovno ažurira novim kolekcijama",
     ],
     tech: "WordPress, WooCommerce",
+    result: "Montana sada ima online prodaju, a ponuda na sajtu prati ponudu u radnjama jer se sajt stalno ažurira novim kolekcijama.",
   },
   "powerm-max": {
-    lead: "Sajt za firmu koja prodaje, ugrađuje i servisira klima uređaje i toplotne pumpe u Bijelom Polju i Podgorici.",
-    sections: [
-      ["Klijent", "<p>PowerM Max se bavi prodajom i montažom klima uređaja i toplotnih pumpi, dubinskim čišćenjem klima, dopunom freona i servisom.</p>"],
-      ["Cilj", "<p>Da posjetilac odmah vidi šta firma radi i da može jednim dodirom pozvati ili zatražiti ponudu.</p>"],
-      ["Šta smo napravili", list([
-        "Početnu stranu sa jasnom porukom i dugmadima za poziv i upit",
-        "Pregled usluga: montaža, servis, čišćenje i dopuna freona",
-        "Brz kontakt preko telefona i WhatsApp-a, prilagođen telefonu",
-      ])],
+    lead: "Sajt za novu firmu koja prodaje, montira i održava klima uređaje i toplotne pumpe u Bijelom Polju i Podgorici.",
+    client: "PowerM Max je nova firma koja se bavi prodajom i montažom klima uređaja i toplotnih pumpi, dubinskim čišćenjem klima, dopunom freona i servisom.",
+    challenge: "Kao nova firma, PowerM Max nije imao nijedan online kanal preko kojeg bi ga kupci pronašli.",
+    goal: "Da posjetilac odmah vidi šta firma radi i da jednim dodirom pozove ili zatraži ponudu.",
+    approach: [
+      "Jasna poruka na početku: šta firma radi i gdje",
+      "Dugmad za poziv i upit na svakom koraku",
+      "Dizajn prilagođen prvo telefonu, jer većina upita stiže sa telefona",
+    ],
+    built: [
+      "Početna strana sa pregledom usluga: montaža, servis, čišćenje i dopuna freona",
+      "Brz kontakt preko telefona i WhatsApp-a",
+      "Objava sajta i osnovni tehnički SEO",
     ],
     tech: "React, Vercel",
+    result: "Firma je dobila svoj prvi online kanal: kupci je mogu pronaći, vidjeti usluge i javiti se direktno sa sajta.",
   },
   "cvjecara-scekic": {
-    lead: "Sajt cvjećare na kojem kupci biraju bukete i aranžmane i plaćaju karticom online.",
-    sections: [
-      ["Klijent", "<p>Cvjećara Šćekić pravi bukete, box aranžmane i cvjetne aranžmane za posebne prilike.</p>"],
-      ["Cilj", "<p>Da kupac može izabrati buket, naručiti ga i platiti bez poziva i bez dolaska u radnju.</p>"],
-      ["Šta smo napravili", list([
-        "Katalog buketa i aranžmana po kategorijama",
-        "Korpu i naručivanje online",
-        "Plaćanje platnim karticama kroz integraciju sa platnim procesorom",
-        "Elegantan izgled koji prati stil same cvjećare",
-      ])],
+    lead: "Novi sajt cvjećare na kojem kupci biraju bukete i aranžmane, naručuju ih i plaćaju karticom online.",
+    client: "Cvjećara Šćekić pravi bukete, box aranžmane i cvjetne aranžmane za posebne prilike.",
+    challenge: "Cvjećara nije imala online prodaju. Narudžbe su išle samo uživo ili telefonom.",
+    goal: "Novi način prodaje cvijeća: da kupac izabere buket, naruči ga i plati bez poziva i bez dolaska u radnju.",
+    approach: [
+      "Elegantan izgled koji prati stil same cvjećare",
+      "Jednostavan put od izbora buketa do plaćanja",
+      "Katalog po kategorijama, pregledan i na telefonu",
+    ],
+    built: [
+      "Katalog buketa i aranžmana po kategorijama",
+      "Korpa i naručivanje online",
+      "Plaćanje platnim karticama kroz integraciju sa platnim procesorom",
     ],
     tech: "React, Vercel, kartično plaćanje",
+    result: "Cvjećara sada prodaje i online: kupci naručuju bukete i plaćaju karticom direktno na sajtu.",
+  },
+  "psc-knezevic": {
+    lead: "Potpuno novi sajt za ovlašćenog Peugeot servisera za Crnu Goru.",
+    client: "PSC Knežević je ovlašćeni Peugeot servis, zastupnik Peugeot servisa za Crnu Goru.",
+    challenge: "Firma je imala stari sajt koji nije odgovarao nivou ovlašćenog servisa jednog velikog brenda.",
+    goal: "Sajt koji izgleda kao ozbiljan, ovlašćeni servis i koji vlasniku vozila brzo daje usluge i kontakt.",
+    approach: [
+      "Novi dizajn u bojama i duhu Peugeot brenda",
+      "Velike fotografije servisa i jasna struktura stranica",
+      "Dugme za poziv uvijek pri ruci",
+    ],
+    built: [
+      "Potpuno novi sajt umjesto starog",
+      "Stranice o nama, usluge i kontakt",
+      "Prilagođeno telefonu, sa direktnim pozivom",
+    ],
+    tech: "",
+    result: "Servis je dobio moderan sajt koji odgovara statusu ovlašćenog Peugeot servisa, umjesto zastarjelog.",
   },
   "vrata-radulovic": {
-    lead: "Sajt za firmu koja prodaje i ugrađuje sobna i ulazna vrata.",
-    sections: [
-      ["Klijent", "<p>Vrata Radulović (Doors Lux &amp; Bonvivan) nudi sobna i ulazna vrata za stanove, kuće i poslovne prostore.</p>"],
-      ["Cilj", "<p>Da modeli vrata izgledaju onako kako izgledaju uživo: luksuzno, u tamnoj atmosferi sa toplim svjetlom.</p>"],
-      ["Šta smo napravili", list([
-        "Tamni, filmski dizajn sa fokusom na fotografije vrata",
-        "Pregled modela sobnih i ulaznih vrata",
-        "Kontakt i poziv na upit na svakom koraku",
-        "Sopstveni domen i objavu sajta",
-      ])],
+    lead: "Sajt za firmu koja preko tri decenije prodaje i ugrađuje sobna i ulazna vrata.",
+    client: "Vrata Radulović (Doors Lux & Bonvivan) preko 30 godina nudi sobna i ulazna vrata za stanove, kuće i poslovne prostore.",
+    challenge: "Firma je dobro poznata i iskusna, ali bez sajta nije imala mjesto gdje novi kupci mogu vidjeti ponudu i nivo firme.",
+    goal: "Sajt koji firmi daje ozbiljnost i nivo kakav ima uživo, i otvara još jedan kanal preko kojeg kupci dolaze.",
+    approach: [
+      "Tamni, filmski dizajn sa toplim svjetlom, da vrata izgledaju luksuzno",
+      "Fokus na fotografijama modela",
+      "Poziv na upit na svakom koraku",
+    ],
+    built: [
+      "Pregled modela sobnih i ulaznih vrata",
+      "Kontakt i upit za ponudu",
+      "Sopstveni domen i objava sajta",
     ],
     tech: "React, Vercel",
+    result: "Firma sa tri decenije iskustva sada i online izgleda kao premium ponuđač, i ima novi kanal za kupce.",
+  },
+  "hp-line": {
+    lead: "Prvi sajt za veliku crnogorsku firmu za obradu pločastih materijala.",
+    client: "HP Line je velika firma iz Crne Gore koja se bavi obradom pločastih materijala.",
+    challenge: "Firma nije imala sajt, pa je kupci i partneri nisu mogli pronaći na internetu.",
+    goal: "Predstaviti firmu, usluge i projekte čisto i premium, uz jasan put do kontakta.",
+    approach: [
+      "Svijetao, minimalan dizajn sa zlatnim akcentom iz loga",
+      "Velika tipografija i poruka „Vaš dom, naša mjera.“",
+      "Jasna struktura: o nama, usluge, projekti, kontakt",
+    ],
+    built: [
+      "Prvi sajt firme, od nule",
+      "Stranice o nama, usluge, projekti i kontakt",
+      "Prilagođeno telefonu i spremno za Google",
+    ],
+    tech: "React, Vercel",
+    result: "HP Line je dobio svoj prvi sajt i prisustvo na internetu.",
+  },
+  "efen-izgradnja": {
+    lead: "Prvi sajt za firmu koja prodaje građevinski materijal i izvodi građevinske radove.",
+    client: "Efen Izgradnja nudi sve za građevinski projekat na jednom mjestu: prodaju materijala, sa preko 10.000 artikala za sve faze gradnje i opremanja, i izvođenje radova, za kupce i firme širom Crne Gore.",
+    challenge: "Firma uopšte nije imala sajt.",
+    goal: "Da kupci i izvođači na jednom mjestu vide ponudu materijala i usluge izvođenja radova i lako zatraže ponudu.",
+    approach: [
+      "Snažan, tamni dizajn sa narandžastim akcentom iz loga",
+      "Dva jasna puta: prodaja materijala i izvođenje radova",
+      "Dugme „Zatraži ponudu“ uvijek vidljivo",
+    ],
+    built: [
+      "Prvi sajt firme, od nule",
+      "Stranice za prodaju, izvođenje radova, o nama i kontakt",
+      "Upit za ponudu za radove",
+    ],
+    tech: "React, Vercel",
+    result: "Efen Izgradnja je dobila prvi sajt, sa kojeg kupci mogu direktno tražiti ponudu.",
   },
 };
 
@@ -265,8 +353,10 @@ const FAQ = [
   ["Koliko traje izrada?", "Zavisi od obima projekta. Rok dogovaramo prije početka rada, kada znamo šta tačno sajt treba da ima."],
   ["Da li radite sa klijentima van Crne Gore?", "Da. Radimo sa firmama iz Crne Gore, Srbije i Bosne i Hercegovine, a saradnja ide preko poziva, WhatsApp-a i emaila."],
   ["Da li pomažete oko domena i hostinga?", "Da. Pomažemo oko izbora i kupovine domena i objave sajta, tako da sajt bude na vašoj adresi."],
+  ["Da li održavate sajt poslije izrade?", "Da. Održavanje nudimo mjesečno ili po potrebi, uz naknadu: izmjene sadržaja, dodavanje artikala i novih kolekcija, tehničke provjere i ažuriranja."],
+  ["Da li radite SEO?", "Svaki sajt dobija osnovni tehnički SEO: brzinu, ispravne naslove i opise, mapu sajta i prijavu u Google Search Console. Napredni SEO radimo kao posebnu uslugu, jer traži istraživanje šta ljudi zaista kucaju kad traže vašu uslugu, pisanje sadržaja i praćenje rezultata."],
   ["Da li radite web shop?", "Da. Pravimo online prodavnice sa katalogom, filterima, korpom i plaćanjem karticom. Primjeri su Montana Shop i Cvjećara Šćekić."],
-  ["Da li sajt može da se nađe na Google-u?", "Svaki sajt pravimo tehnički spreman za Google: brz, sa ispravnim naslovima i opisima, mapom sajta i prijavom u Google Search Console. Pozicije na Google-u ne može garantovati niko, ali dobra osnova je preduslov."],
+  ["Da li sajt može da se nađe na Google-u?", "Da, svaki sajt pravimo tehnički spreman za Google. Pozicije na Google-u ne može garantovati niko, ali dobra osnova i kvalitetan sadržaj su preduslov."],
   ["Šta je potrebno od mene?", "Kratak opis posla, logo i fotografije ako ih imate. Ako nemate tekstove ili fotografije, pomažemo i oko toga."],
 ];
 
@@ -384,11 +474,16 @@ for (const p of PROJECTS.filter((p) => p.study)) {
     description: `${s.lead} Pogledajte šta je WebEra napravio za ${p.title}.`,
     crumbs: [["/work", "Radovi"], [`/work/${p.slug}`, p.title]],
     body: [
-      hero(`Studija slučaja · ${p.cat}`, esc(p.title), s.lead),
+      hero(`Studija slučaja · ${p.cat}`, esc(p.title), esc(s.lead)),
       `      <figure class="cover"><img src="${p.img}" alt="${esc(p.alt)}" width="1600" height="866" fetchpriority="high" /></figure>`,
-      ...s.sections.map(([t, html]) => block(t, html)),
-      block("Tehnologije", `<p>${esc(s.tech)}</p>`),
-      block("Pogledajte uživo", `<p><a class="btn line" href="${p.url}" target="_blank" rel="noopener">Posjeti ${esc(p.title)} ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a> ili <a href="/services">naše usluge</a>.</p>`),
+      block("Klijent", `<p>${esc(s.client)}</p>`),
+      block("Izazov", `<p>${esc(s.challenge)}</p>`),
+      block("Cilj", `<p>${esc(s.goal)}</p>`),
+      block("Pristup i dizajn", list(s.approach.map(esc))),
+      block("Šta smo napravili", list(s.built.map(esc))),
+      ...(s.tech ? [block("Tehnologije", `<p>${esc(s.tech)}</p>`)] : []),
+      block("Rezultat", `<p>${esc(s.result)}</p>`),
+      block("Pogledajte uživo", `<p><a class="btn line" href="${p.url}" target="_blank" rel="noopener">Posjeti ${esc(p.title)} ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a>, <a href="/services">naše usluge</a> ili <a href="/contact">zatražite ponudu za svoj sajt</a>.</p>`),
     ].join("\n"),
   });
 }
