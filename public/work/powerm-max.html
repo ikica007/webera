@@ -30,62 +30,77 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/svjetlo-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://webera.website/#webera","name":"WebEra","slogan":"Dizajn van vremena","description":"Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.","url":"https://webera.website/","logo":"https://webera.website/apple-touch-icon.png","image":"https://webera.website/og-image.jpg","email":"dobardzicilijas123@gmail.com","telephone":"+38267313289","address":{"@type":"PostalAddress","addressLocality":"Podgorica","addressCountry":"ME"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"],"sameAs":["https://www.instagram.com/webera_design/"]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebEra","item":"https://webera.website/"},{"@type":"ListItem","position":2,"name":"Radovi","item":"https://webera.website/work"},{"@type":"ListItem","position":3,"name":"PowerM Max","item":"https://webera.website/work/powerm-max"}]}</script>
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
+  <body data-film="svjetlo">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
         <a href="/services">Usluge</a>
+        <i aria-hidden="true"></i>
         <a href="/work" aria-current="page">Radovi</a>
+        <i aria-hidden="true"></i>
         <a href="/about">O nama</a>
+        <i aria-hidden="true"></i>
         <a href="/contact">Kontakt</a>
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">PowerM Max</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs"><a href="/">WebEra</a> <i>/</i> <a href="/work">Radovi</a> <i>/</i> <span aria-current="page">PowerM Max</span></p>
       <section class="hero">
         <p class="label">Studija slučaja · Klima uređaji i toplotne pumpe</p>
-        <h1>PowerM Max</h1>
+        <h1><span class="mask-row"><span class="mask-line">PowerM Max</span></span></h1>
         <p class="lead">Sajt za novu firmu koja prodaje, montira i održava klima uređaje i toplotne pumpe u Bijelom Polju i Podgorici.</p>
       </section>
-      <figure class="cover"><img src="/works/powermax.webp" alt="PowerM Max, sajt za montažu i održavanje klima uređaja, izradio WebEra" width="1600" height="866" fetchpriority="high" /></figure>
-      <section class="block">
+      <figure class="cover" data-reveal><img src="/works/powermax.webp" alt="PowerM Max, sajt za montažu i održavanje klima uređaja, izradio WebEra" width="1600" height="866" fetchpriority="high" /></figure>
+      <section class="block" data-reveal>
         <h2>Klijent</h2>
         <p>PowerM Max je nova firma koja se bavi prodajom i montažom klima uređaja i toplotnih pumpi, dubinskim čišćenjem klima, dopunom freona i servisom.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Izazov</h2>
-        <p>Kao nova firma, PowerM Max nije imao nijedan online kanal preko kojeg bi ga kupci pronašli.</p>
+        <p class="big">Kao nova firma, PowerM Max nije imao nijedan online kanal preko kojeg bi ga kupci pronašli.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Cilj</h2>
         <p>Da posjetilac odmah vidi šta firma radi i da jednim dodirom pozove ili zatraži ponudu.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Pristup i dizajn</h2>
         <ul class="ticks"><li>Jasna poruka na početku: šta firma radi i gdje</li><li>Dugmad za poziv i upit na svakom koraku</li><li>Dizajn prilagođen prvo telefonu, jer većina upita stiže sa telefona</li></ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Šta smo napravili</h2>
         <ul class="ticks"><li>Početna strana sa pregledom usluga: montaža, servis, čišćenje i dopuna freona</li><li>Brz kontakt preko telefona i WhatsApp-a</li><li>Objava sajta i osnovni tehnički SEO</li></ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Tehnologije</h2>
         <p>React, Vercel</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Rezultat</h2>
-        <p>Firma je dobila svoj prvi online kanal: kupci je mogu pronaći, vidjeti usluge i javiti se direktno sa sajta.</p>
+        <p class="big">Firma je dobila svoj prvi online kanal: kupci je mogu pronaći, vidjeti usluge i javiti se direktno sa sajta.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Pogledajte uživo</h2>
         <p><a class="btn line" href="https://powerm-max.vercel.app" target="_blank" rel="noopener">Posjeti PowerM Max ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a>, <a href="/services">naše usluge</a> ili <a href="/contact">zatražite ponudu za svoj sajt</a>.</p>
       </section>
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -93,6 +108,7 @@
           <a class="btn line" href="mailto:dobardzicilijas123@gmail.com">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>

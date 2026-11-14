@@ -30,62 +30,77 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/temelji-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://webera.website/#webera","name":"WebEra","slogan":"Dizajn van vremena","description":"Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.","url":"https://webera.website/","logo":"https://webera.website/apple-touch-icon.png","image":"https://webera.website/og-image.jpg","email":"dobardzicilijas123@gmail.com","telephone":"+38267313289","address":{"@type":"PostalAddress","addressLocality":"Podgorica","addressCountry":"ME"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"],"sameAs":["https://www.instagram.com/webera_design/"]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebEra","item":"https://webera.website/"},{"@type":"ListItem","position":2,"name":"Radovi","item":"https://webera.website/work"},{"@type":"ListItem","position":3,"name":"Montana Shop","item":"https://webera.website/work/montana"}]}</script>
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
+  <body data-film="temelji">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
         <a href="/services">Usluge</a>
+        <i aria-hidden="true"></i>
         <a href="/work" aria-current="page">Radovi</a>
+        <i aria-hidden="true"></i>
         <a href="/about">O nama</a>
+        <i aria-hidden="true"></i>
         <a href="/contact">Kontakt</a>
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">Montana Shop</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs"><a href="/">WebEra</a> <i>/</i> <a href="/work">Radovi</a> <i>/</i> <span aria-current="page">Montana Shop</span></p>
       <section class="hero">
         <p class="label">Studija slučaja · Online prodavnica muške mode</p>
-        <h1>Montana Shop</h1>
+        <h1><span class="mask-row"><span class="mask-line">Montana Shop</span></span></h1>
         <p class="lead">Redizajn sajta i pokretanje online prodaje za porodični brend muške mode koji postoji od 1993. godine, sa prodavnicama u Bijelom Polju i Podgorici.</p>
       </section>
-      <figure class="cover"><img src="/works/montana-shop.webp" alt="Montana Shop, online prodavnica muške mode iz Crne Gore, sajt izradio WebEra" width="1600" height="866" fetchpriority="high" /></figure>
-      <section class="block">
+      <figure class="cover" data-reveal><img src="/works/montana-shop.webp" alt="Montana Shop, online prodavnica muške mode iz Crne Gore, sajt izradio WebEra" width="1600" height="866" fetchpriority="high" /></figure>
+      <section class="block" data-reveal>
         <h2>Klijent</h2>
         <p>Montana je porodični brend muške mode iz Crne Gore, osnovan 1993. godine. Pored svoje kolekcije prodaje i brendove kao što su Beverly Hills Polo Club, Tom Tailor, Fred Mello, Rifle i Navigare.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Izazov</h2>
-        <p>Brend je imao sajt, ali bez online prodaje. Kupci su mogli vidjeti ponudu samo u radnjama, a kolekcije se mijenjaju svake sezone.</p>
+        <p class="big">Brend je imao sajt, ali bez online prodaje. Kupci su mogli vidjeti ponudu samo u radnjama, a kolekcije se mijenjaju svake sezone.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Cilj</h2>
         <p>Da kupci iz cijele Crne Gore mogu pregledati i naručiti artikle online, i da se nove kolekcije redovno pojavljuju na sajtu.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Pristup i dizajn</h2>
         <ul class="ticks"><li>Kompletan redizajn sajta, čist i moderan, u skladu sa brendom</li><li>Navigacija sa krugovima kategorija, inspirisana velikim modnim brendovima</li><li>Katalog podijeljen na odjeću, obuću i aksesoare</li></ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Šta smo napravili</h2>
         <ul class="ticks"><li>Online prodavnica na WordPress i WooCommerce platformi</li><li>Filteri po veličini i boji i brza pretraga artikala</li><li>Unos artikala sa fotografijama i opisima</li><li>Osnovni tehnički SEO i Google Search Console</li><li>Stalno održavanje: sajt se redovno ažurira novim kolekcijama</li></ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Tehnologije</h2>
         <p>WordPress, WooCommerce</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Rezultat</h2>
-        <p>Montana sada ima online prodaju, a ponuda na sajtu prati ponudu u radnjama jer se sajt stalno ažurira novim kolekcijama.</p>
+        <p class="big">Montana sada ima online prodaju, a ponuda na sajtu prati ponudu u radnjama jer se sajt stalno ažurira novim kolekcijama.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Pogledajte uživo</h2>
         <p><a class="btn line" href="https://montanashop.me" target="_blank" rel="noopener">Posjeti Montana Shop ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a>, <a href="/services">naše usluge</a> ili <a href="/contact">zatražite ponudu za svoj sajt</a>.</p>
       </section>
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -93,6 +108,7 @@
           <a class="btn line" href="mailto:dobardzicilijas123@gmail.com">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>
