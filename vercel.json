@@ -1,0 +1,17 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.webera.website"
+        }
+      ],
+      "destination": "https://webera.website/:path*",
+      "permanent": true
+    }
+  ]
+}
