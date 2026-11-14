@@ -546,7 +546,7 @@ export function createStage(canvas: HTMLCanvasElement) {
   function resize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const ratio = Math.min(window.devicePixelRatio || 1, w < 768 ? 2 : 1.5);
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
     if (w === width && h === height && ratio === dpr) return;
     width = w;
     height = h;
