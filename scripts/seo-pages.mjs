@@ -39,7 +39,7 @@ const ORG = {
   slogan: "Dizajn van vremena",
   description: "Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.",
   url: `${SITE}/`,
-  logo: `${SITE}/apple-touch-icon.png`,
+  logo: `${SITE}/icon-512.png`,
   image: `${SITE}/og-image.jpg`,
   email: EMAIL,
   telephone: PHONE,
@@ -95,7 +95,7 @@ function page({ path, title, description, crumbs, body, schema = [], film = "sat
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
