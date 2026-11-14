@@ -117,13 +117,20 @@ export function Backdrop() {
     };
     poster.src = POSTER;
 
-    projects.forEach((project, index) => {
-      const image = new Image();
-      image.onload = () => {
-        if (alive) stage.setWork(index, image);
-      };
-      image.src = project.src;
-    });
+    // slike radova tek kad se film pokrene, da ne usporavaju prvo učitavanje
+    let worksRequested = false;
+    const loadWorks = () => {
+      if (worksRequested) return;
+      worksRequested = true;
+      projects.forEach((project, index) => {
+        const image = new Image();
+        image.decoding = "async";
+        image.onload = () => {
+          if (alive) stage.setWork(index, image);
+        };
+        image.src = project.src;
+      });
+    };
 
     const began = performance.now();
     const poses: PanelPose[] = projects.map((_, index) => ({
@@ -152,12 +159,15 @@ export function Backdrop() {
     const unsubscribe = subscribe((frame) => {
       if (!loadState.ready) {
         const waited = performance.now() - began;
-        const enough = pack.count > 0 && pack.available >= Math.min(pack.count, 36) && !!pack.get(0);
+        const enough = pack.count > 0 && pack.available >= Math.min(pack.count, 18) && !!pack.get(0);
         loadState.progress = pack.failed ? 1 : pack.progress;
         if ((posterDone || waited > 4000) && (enough || pack.failed || waited > 9000)) {
           loadState.ready = true;
         }
       }
+      // dok traje učitavanje, ekran je prekriven: ne crtamo, da telefon ne radi uzalud
+      if (!loadState.ready) return;
+      loadWorks();
       const u = clamp(frame.u, 0, TOTAL);
       const t = frame.t;
       const film = filmAt(u);
