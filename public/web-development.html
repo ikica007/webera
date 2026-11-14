@@ -23,6 +23,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -72,27 +73,27 @@
         <ul class="grid">
         <li class="card">
           <a class="shot" href="/work/powerm-max">
-            <img src="/works/powermax.webp" alt="PowerM Max, sajt za klima uređaje i toplotne pumpe, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
+            <img src="/works/powermax.webp" alt="PowerM Max, sajt za montažu i održavanje klima uređaja, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
           </a>
           <p class="label">Klima uređaji i toplotne pumpe</p>
           <h3>PowerM Max</h3>
           <p class="links"><a href="/work/powerm-max">Pročitaj studiju slučaja →</a><a href="https://powerm-max.vercel.app" target="_blank" rel="noopener">Posjeti sajt ↗</a></p>
         </li>
         <li class="card">
-          <a class="shot" href="https://pscknezevicservis.me/" target="_blank" rel="noopener">
-            <img src="/works/psc-knezevic.webp" alt="PSC Knežević, sajt auto servisa, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
+          <a class="shot" href="/work/psc-knezevic">
+            <img src="/works/psc-knezevic.webp" alt="PSC Knežević, sajt ovlašćenog Peugeot servisa u Crnoj Gori, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
           </a>
-          <p class="label">Auto servis</p>
+          <p class="label">Ovlašćeni Peugeot servis</p>
           <h3>PSC Knežević</h3>
-          <p class="links"><a href="https://pscknezevicservis.me/" target="_blank" rel="noopener">Posjeti sajt ↗</a></p>
+          <p class="links"><a href="/work/psc-knezevic">Pročitaj studiju slučaja →</a><a href="https://pscknezevicservis.me/" target="_blank" rel="noopener">Posjeti sajt ↗</a></p>
         </li>
         <li class="card">
-          <a class="shot" href="https://hp-line.vercel.app/" target="_blank" rel="noopener">
-            <img src="/works/hp-line.webp" alt="HP Line, sajt za namještaj po mjeri, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
+          <a class="shot" href="/work/hp-line">
+            <img src="/works/hp-line.webp" alt="HP Line, sajt firme za obradu pločastih materijala u Crnoj Gori, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
           </a>
-          <p class="label">Namještaj po mjeri</p>
+          <p class="label">Obrada pločastih materijala</p>
           <h3>HP Line</h3>
-          <p class="links"><a href="https://hp-line.vercel.app/" target="_blank" rel="noopener">Posjeti sajt ↗</a></p>
+          <p class="links"><a href="/work/hp-line">Pročitaj studiju slučaja →</a><a href="https://hp-line.vercel.app/" target="_blank" rel="noopener">Posjeti sajt ↗</a></p>
         </li>
       </ul>
       </section>
@@ -118,5 +119,15 @@
       </nav>
       <p class="fine">© 2026 WebEra · Podgorica, Crna Gora · Dizajn van vremena</p>
     </footer>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
   </body>
 </html>

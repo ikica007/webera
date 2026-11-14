@@ -23,6 +23,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,7 +81,7 @@
         </li>
         <li class="card">
           <a class="shot" href="/work/cvjecara-scekic">
-            <img src="/works/cvjecara.webp" alt="Cvjećara Šćekić, sajt cvjećare sa online naručivanjem, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
+            <img src="/works/cvjecara.webp" alt="Cvjećara Šćekić, sajt cvjećare sa online naručivanjem i plaćanjem karticom, izradio WebEra" width="1600" height="866" loading="lazy" decoding="async" />
           </a>
           <p class="label">Cvjećara sa online naručivanjem</p>
           <h3>Cvjećara Šćekić</h3>
@@ -122,5 +123,15 @@
       </nav>
       <p class="fine">© 2026 WebEra · Podgorica, Crna Gora · Dizajn van vremena</p>
     </footer>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
   </body>
 </html>

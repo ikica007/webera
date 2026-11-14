@@ -23,6 +23,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -78,8 +79,10 @@
         <details><summary>Koliko traje izrada?</summary><p>Zavisi od obima projekta. Rok dogovaramo prije početka rada, kada znamo šta tačno sajt treba da ima.</p></details>
         <details><summary>Da li radite sa klijentima van Crne Gore?</summary><p>Da. Radimo sa firmama iz Crne Gore, Srbije i Bosne i Hercegovine, a saradnja ide preko poziva, WhatsApp-a i emaila.</p></details>
         <details><summary>Da li pomažete oko domena i hostinga?</summary><p>Da. Pomažemo oko izbora i kupovine domena i objave sajta, tako da sajt bude na vašoj adresi.</p></details>
+        <details><summary>Da li održavate sajt poslije izrade?</summary><p>Da. Održavanje nudimo mjesečno ili po potrebi, uz naknadu: izmjene sadržaja, dodavanje artikala i novih kolekcija, tehničke provjere i ažuriranja.</p></details>
+        <details><summary>Da li radite SEO?</summary><p>Svaki sajt dobija osnovni tehnički SEO: brzinu, ispravne naslove i opise, mapu sajta i prijavu u Google Search Console. Napredni SEO radimo kao posebnu uslugu, jer traži istraživanje šta ljudi zaista kucaju kad traže vašu uslugu, pisanje sadržaja i praćenje rezultata.</p></details>
         <details><summary>Da li radite web shop?</summary><p>Da. Pravimo online prodavnice sa katalogom, filterima, korpom i plaćanjem karticom. Primjeri su Montana Shop i Cvjećara Šćekić.</p></details>
-        <details><summary>Da li sajt može da se nađe na Google-u?</summary><p>Svaki sajt pravimo tehnički spreman za Google: brz, sa ispravnim naslovima i opisima, mapom sajta i prijavom u Google Search Console. Pozicije na Google-u ne može garantovati niko, ali dobra osnova je preduslov.</p></details>
+        <details><summary>Da li sajt može da se nađe na Google-u?</summary><p>Da, svaki sajt pravimo tehnički spreman za Google. Pozicije na Google-u ne može garantovati niko, ali dobra osnova i kvalitetan sadržaj su preduslov.</p></details>
         <details><summary>Šta je potrebno od mene?</summary><p>Kratak opis posla, logo i fotografije ako ih imate. Ako nemate tekstove ili fotografije, pomažemo i oko toga.</p></details>
       </div>
       </section>
@@ -105,5 +108,15 @@
       </nav>
       <p class="fine">© 2026 WebEra · Podgorica, Crna Gora · Dizajn van vremena</p>
     </footer>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
   </body>
 </html>
