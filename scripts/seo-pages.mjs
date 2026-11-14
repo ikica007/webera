@@ -48,7 +48,7 @@ const ORG = {
   sameAs: [INSTAGRAM],
 };
 
-function page({ path, title, description, crumbs, body, schema = [] }) {
+function page({ path, title, description, crumbs, body, schema = [], film = "sat" }) {
   const url = `${SITE}${path}`;
   const breadcrumb = {
     "@context": "https://schema.org",
@@ -101,21 +101,33 @@ function page({ path, title, description, crumbs, body, schema = [] }) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/${film}-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     ${jsonld}
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
-        ${NAV.map(([href, name]) => `<a href="${href}"${path.startsWith(href) ? ' aria-current="page"' : ""}>${name}</a>`).join("\n        ")}
+  <body data-film="${film}">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
+        ${NAV.map(([href, name]) => `<a href="${href}"${path.startsWith(href) ? ' aria-current="page"' : ""}>${name}</a>`).join("\n        <i aria-hidden=\"true\"></i>\n        ")}
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">${esc(crumbs[crumbs.length - 1][1])}</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs">${crumbHtml}</p>
 ${body}
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -123,6 +135,7 @@ ${body}
           <a class="btn line" href="mailto:${EMAIL}">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>
@@ -152,13 +165,13 @@ ${body}
 
 const hero = (label, h1, lead) => `      <section class="hero">
         <p class="label">${esc(label)}</p>
-        <h1>${h1}</h1>
+        <h1><span class="mask-row"><span class="mask-line">${h1}</span></span></h1>
         <p class="lead">${lead}</p>
       </section>`;
 
 const list = (items) => `<ul class="ticks">${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
 
-const block = (title, html, id = "") => `      <section class="block"${id ? ` id="${id}"` : ""}>
+const block = (title, html, id = "") => `      <section class="block" data-reveal${id ? ` id="${id}"` : ""}>
         <h2>${title}</h2>
         ${html}
       </section>`;
@@ -368,6 +381,7 @@ const pages = [];
 
 pages.push({
   path: "/services",
+  film: "sat",
   title: "Usluge: web dizajn, izrada sajtova i web shopa | WebEra",
   description: "WebEra radi web dizajn, izradu web sajtova i online prodavnica za firme iz Crne Gore, Srbije i BiH. Pogledajte usluge, proces rada i radove.",
   crumbs: [["/services", "Usluge"]],
@@ -383,6 +397,7 @@ pages.push({
 
 pages.push({
   path: "/web-design",
+  film: "temelji",
   title: "Web dizajn Podgorica i Crna Gora | WebEra",
   description: "Web dizajn za firme iz Podgorice i cijele Crne Gore: moderan, prepoznatljiv dizajn sajta koji vodi posjetioca do poziva ili kupovine.",
   crumbs: [["/services", "Usluge"], ["/web-design", "Web dizajn"]],
@@ -408,6 +423,7 @@ pages.push({
 
 pages.push({
   path: "/web-development",
+  film: "digital",
   title: "Izrada web sajtova Crna Gora i Podgorica | WebEra",
   description: "Izrada web sajtova po mjeri u Crnoj Gori: brzi, moderni sajtovi spremni za Google, od prezentacije firme do sajtova sa 3D animacijama.",
   crumbs: [["/services", "Usluge"], ["/web-development", "Izrada web sajtova"]],
@@ -434,6 +450,7 @@ pages.push({
 
 pages.push({
   path: "/ecommerce",
+  film: "svjetlo",
   title: "Izrada web shopa i online prodavnice | WebEra",
   description: "Izrada web shopa za firme iz Crne Gore i regiona: katalog, filteri, korpa i plaćanje karticom. Primjeri: Montana Shop i Cvjećara Šćekić.",
   crumbs: [["/services", "Usluge"], ["/ecommerce", "Izrada web shopa"]],
@@ -454,42 +471,46 @@ pages.push({
 
 pages.push({
   path: "/work",
+  film: "digital",
   title: "Radovi: sajtovi i web shopovi koje smo napravili | WebEra",
   description: "Portfolio WebEra: online prodavnice, sajtovi za servise, zanatlije i brendove iz Crne Gore. Montana Shop, Cvjećara Šćekić, PowerM Max i drugi.",
   crumbs: [["/work", "Radovi"]],
   body: [
     hero("Radovi", "Sajtovi koje smo napravili", "Svaki projekat je priča za sebe. Ovo su sajtovi koje smo radili za firme iz Crne Gore."),
-    `      <section class="block">
+    `      <section class="block" data-reveal>
         ${grid(PROJECTS)}
       </section>`,
     block("Vaš projekat", `<p>Treba vam sajt ili web shop? Pogledajte <a href="/services">usluge</a> ili nam se javite.</p>`),
   ].join("\n"),
 });
 
-for (const p of PROJECTS.filter((p) => p.study)) {
+const FILMS = ["temelji", "svjetlo", "digital", "horizont", "sat"];
+PROJECTS.filter((p) => p.study).forEach((p, n) => {
   const s = STUDIES[p.slug];
   pages.push({
     path: `/work/${p.slug}`,
+    film: FILMS[n % FILMS.length],
     title: `${p.title}: ${p.cat.toLowerCase()} | Studija slučaja | WebEra`,
     description: `${s.lead} Pogledajte šta je WebEra napravio za ${p.title}.`,
     crumbs: [["/work", "Radovi"], [`/work/${p.slug}`, p.title]],
     body: [
       hero(`Studija slučaja · ${p.cat}`, esc(p.title), esc(s.lead)),
-      `      <figure class="cover"><img src="${p.img}" alt="${esc(p.alt)}" width="1600" height="866" fetchpriority="high" /></figure>`,
+      `      <figure class="cover" data-reveal><img src="${p.img}" alt="${esc(p.alt)}" width="1600" height="866" fetchpriority="high" /></figure>`,
       block("Klijent", `<p>${esc(s.client)}</p>`),
-      block("Izazov", `<p>${esc(s.challenge)}</p>`),
+      block("Izazov", `<p class="big">${esc(s.challenge)}</p>`),
       block("Cilj", `<p>${esc(s.goal)}</p>`),
       block("Pristup i dizajn", list(s.approach.map(esc))),
       block("Šta smo napravili", list(s.built.map(esc))),
       ...(s.tech ? [block("Tehnologije", `<p>${esc(s.tech)}</p>`)] : []),
-      block("Rezultat", `<p>${esc(s.result)}</p>`),
+      block("Rezultat", `<p class="big">${esc(s.result)}</p>`),
       block("Pogledajte uživo", `<p><a class="btn line" href="${p.url}" target="_blank" rel="noopener">Posjeti ${esc(p.title)} ↗</a></p><p>Pogledajte i <a href="/work">ostale radove</a>, <a href="/services">naše usluge</a> ili <a href="/contact">zatražite ponudu za svoj sajt</a>.</p>`),
     ].join("\n"),
   });
-}
+});
 
 pages.push({
   path: "/about",
+  film: "temelji",
   title: "O nama: WebEra, web dizajn studio iz Podgorice | WebEra",
   description: "WebEra je web dizajn studio iz Podgorice. Pravimo sajtove koji traju, koji inspirišu i koji daju rezultat, za firme iz Crne Gore i regiona.",
   crumbs: [["/about", "O nama"]],
@@ -509,6 +530,7 @@ pages.push({
 
 pages.push({
   path: "/contact",
+  film: "horizont",
   title: "Kontakt: zatražite ponudu za sajt | WebEra",
   description: "Kontaktirajte WebEra za izradu sajta ili web shopa. Pišite na WhatsApp ili email i dobićete ponudu. Odgovori na česta pitanja o cijeni i roku.",
   crumbs: [["/contact", "Kontakt"]],
