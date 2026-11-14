@@ -42,6 +42,15 @@ export function Contact() {
         </div>
       </div>
       <footer className="site-footer" ref={footer}>
+        <nav className="footer-links" aria-label="Stranice">
+          <a href="/services">Usluge</a>
+          <a href="/web-design">Web dizajn</a>
+          <a href="/web-development">Izrada web sajtova</a>
+          <a href="/ecommerce">Web shop</a>
+          <a href="/work">Radovi</a>
+          <a href="/about">O nama</a>
+          <a href="/contact">Kontakt</a>
+        </nav>
         <span>{t("rights")}</span>
         <button type="button" onClick={rewind}>
           {t("rewind")} <span aria-hidden="true">↑</span>

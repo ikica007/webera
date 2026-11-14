@@ -54,7 +54,7 @@ export function Hero({ entered }: { entered: boolean }) {
     <section ref={root} className={entered ? "layer hero is-entered" : "layer hero"}>
       <div className="hero-tilt" ref={tilt}>
         <h1 className="hero-title">
-          <span className="sr-only">WebEra. {t("slogan")}</span>
+          <span className="sr-only">WebEra: web dizajn i izrada web sajtova, Podgorica. {t("slogan")}</span>
           <span className="hero-half hero-web" ref={web} aria-hidden="true">
             <span className="hero-mask">
               <span className="hero-word">Web</span>
