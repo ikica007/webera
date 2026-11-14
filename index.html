@@ -23,6 +23,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "@id": "https://webera.website/#webera", "name": "WebEra", "slogan": "Dizajn van vremena", "description": "Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.", "url": "https://webera.website/", "logo": "https://webera.website/apple-touch-icon.png", "image": "https://webera.website/og-image.jpg", "telephone": "+38267313289", "address": {"@type": "PostalAddress", "addressLocality": "Podgorica", "addressCountry": "ME"}, "areaServed": ["Crna Gora", "Srbija", "Bosna i Hercegovina"], "sameAs": ["https://www.instagram.com/webera_design/"]}</script>
@@ -37,5 +38,16 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // upit = klik na WhatsApp, email ili poziv; u Analyticsu se vidi kao generate_lead
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[href]");
+        if (!a || typeof gtag !== "function") return;
+        var h = a.getAttribute("href") || "";
+        var m = h.indexOf("wa.me") > -1 ? "whatsapp" : h.indexOf("mailto:") === 0 ? "email" : h.indexOf("tel:") === 0 ? "telefon" : "";
+        if (m) gtag("event", "generate_lead", { method: m, page_path: location.pathname });
+      });
+    </script>
+
   </body>
 </html>
