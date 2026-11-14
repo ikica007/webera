@@ -166,7 +166,11 @@ export function Backdrop() {
         }
       }
       // dok traje učitavanje, ekran je prekriven: ne crtamo, da telefon ne radi uzalud
-      if (!loadState.ready) return;
+      if (!loadState.ready) {
+        // prvi kadrovi se dekodiraju i dok traje učitavanje, inače sajt čeka do isteka vremena
+        pack.want(0, 1);
+        return;
+      }
       loadWorks();
       const u = clamp(frame.u, 0, TOTAL);
       const t = frame.t;

@@ -27,9 +27,13 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
     let shown = 0;
     let lit = -1;
     const began = performance.now();
+    let last = began;
     const tick = (now: number) => {
+      // brzina brojanja ne zavisi od broja sličica u sekundi, pa slabiji telefon ne čeka duže
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
       const target = loadState.ready ? 1 : Math.min(0.92, 0.03 + loadState.progress * 0.9);
-      shown += (target - shown) * 0.08;
+      shown += (target - shown) * (1 - Math.exp(-dt * (loadState.ready ? 7 : 5)));
       const on = Math.round(shown * TICKS);
       if (on !== lit) {
         for (let i = 0; i < TICKS; i++) ticks.current[i]?.classList.toggle("is-on", i < on);
@@ -42,7 +46,7 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
         code.current.textContent = `00:00:${String(Math.floor(left)).padStart(2, "0")}:${String(frames).padStart(2, "0")}`;
       }
       if (percent.current) percent.current.textContent = String(Math.round(shown * 100)).padStart(3, "0");
-      if (loadState.ready && shown > 0.985 && now - began > 1400) {
+      if (loadState.ready && shown > 0.97 && now - began > 1400) {
         setPhase("turn");
         timers.push(window.setTimeout(() => setPhase("out"), 900));
         timers.push(window.setTimeout(() => done.current(), 1700));
