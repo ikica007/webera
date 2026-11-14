@@ -30,32 +30,47 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/svjetlo-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://webera.website/#webera","name":"WebEra","slogan":"Dizajn van vremena","description":"Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.","url":"https://webera.website/","logo":"https://webera.website/apple-touch-icon.png","image":"https://webera.website/og-image.jpg","email":"dobardzicilijas123@gmail.com","telephone":"+38267313289","address":{"@type":"PostalAddress","addressLocality":"Podgorica","addressCountry":"ME"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"],"sameAs":["https://www.instagram.com/webera_design/"]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebEra","item":"https://webera.website/"},{"@type":"ListItem","position":2,"name":"Usluge","item":"https://webera.website/services"},{"@type":"ListItem","position":3,"name":"Izrada web shopa","item":"https://webera.website/ecommerce"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","serviceType":"Izrada web shopa","provider":{"@id":"https://webera.website/#webera"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"]}</script>
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
+  <body data-film="svjetlo">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
         <a href="/services">Usluge</a>
+        <i aria-hidden="true"></i>
         <a href="/work">Radovi</a>
+        <i aria-hidden="true"></i>
         <a href="/about">O nama</a>
+        <i aria-hidden="true"></i>
         <a href="/contact">Kontakt</a>
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">Izrada web shopa</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs"><a href="/">WebEra</a> <i>/</i> <a href="/services">Usluge</a> <i>/</i> <span aria-current="page">Izrada web shopa</span></p>
       <section class="hero">
         <p class="label">Web shop · ecommerce web design</p>
-        <h1>Izrada web shopa i online prodavnice</h1>
+        <h1><span class="mask-row"><span class="mask-line">Izrada web shopa i online prodavnice</span></span></h1>
         <p class="lead">Online prodavnica koja radi i kad je radnja zatvorena. Pravimo katalog, korpu i plaćanje karticom, prilagođeno kupcima iz Crne Gore i regiona.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Šta dobijate</h2>
         <ul class="ticks"><li>Katalog proizvoda sa kategorijama, veličinama, bojama i filterima</li><li>Pretragu proizvoda</li><li>Korpu i naručivanje</li><li>Plaćanje platnim karticama, po dogovoru sa vašom bankom ili procesorom</li><li>Fotografije i opise proizvoda spremne za Google</li></ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Primjeri</h2>
         <ul class="grid">
         <li class="card">
@@ -76,7 +91,7 @@
         </li>
       </ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Kako radimo</h2>
         <ol class="steps">
           <li><strong>Razgovor</strong><span>Upoznamo vaš posao, kupce i šta sajt treba da postigne.</span></li>
@@ -87,7 +102,7 @@
       </section>
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -95,6 +110,7 @@
           <a class="btn line" href="mailto:dobardzicilijas123@gmail.com">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>

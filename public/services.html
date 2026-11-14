@@ -30,28 +30,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/sat-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://webera.website/#webera","name":"WebEra","slogan":"Dizajn van vremena","description":"Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.","url":"https://webera.website/","logo":"https://webera.website/apple-touch-icon.png","image":"https://webera.website/og-image.jpg","email":"dobardzicilijas123@gmail.com","telephone":"+38267313289","address":{"@type":"PostalAddress","addressLocality":"Podgorica","addressCountry":"ME"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"],"sameAs":["https://www.instagram.com/webera_design/"]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebEra","item":"https://webera.website/"},{"@type":"ListItem","position":2,"name":"Usluge","item":"https://webera.website/services"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","serviceType":"Web dizajn i izrada web sajtova","provider":{"@id":"https://webera.website/#webera"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"]}</script>
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
+  <body data-film="sat">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
         <a href="/services" aria-current="page">Usluge</a>
+        <i aria-hidden="true"></i>
         <a href="/work">Radovi</a>
+        <i aria-hidden="true"></i>
         <a href="/about">O nama</a>
+        <i aria-hidden="true"></i>
         <a href="/contact">Kontakt</a>
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">Usluge</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs"><a href="/">WebEra</a> <i>/</i> <span aria-current="page">Usluge</span></p>
       <section class="hero">
         <p class="label">Usluge</p>
-        <h1>Web dizajn i izrada web sajtova</h1>
+        <h1><span class="mask-row"><span class="mask-line">Web dizajn i izrada web sajtova</span></span></h1>
         <p class="lead">Pravimo sajtove koji ne stare i koji prodaju: od prvog razgovora do objave na vašem domenu. Radimo za firme iz Podgorice, cijele Crne Gore i regiona.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Šta radimo</h2>
         <ul class="services">
         <li><a href="/web-design"><span class="label">→</span><strong>Web dizajn</strong><span>Dizajn sajta koji izgleda kao vaš brend i vodi posjetioca do poziva ili kupovine.</span></a></li>
@@ -59,7 +74,7 @@
         <li><a href="/ecommerce"><span class="label">→</span><strong>Izrada web shopa</strong><span>Online prodavnice sa katalogom, korpom i plaćanjem karticom.</span></a></li>
       </ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Kako radimo</h2>
         <ol class="steps">
           <li><strong>Razgovor</strong><span>Upoznamo vaš posao, kupce i šta sajt treba da postigne.</span></li>
@@ -68,11 +83,11 @@
           <li><strong>Objava</strong><span>Pomažemo oko domena, objave i prijave sajta na Google.</span></li>
         </ol>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Radovi</h2>
         <p>Pogledajte <a href="/work">sajtove koje smo napravili</a>, od online prodavnica do sajtova za servise i zanatlije.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Česta pitanja</h2>
         <div class="faq">
         <details><summary>Koliko košta izrada sajta?</summary><p>Cijena zavisi od broja stranica, funkcija (npr. web shop, plaćanje karticom, više jezika) i od toga ko priprema tekstove i fotografije. Pošaljite kratak opis na WhatsApp ili email i dobićete konkretnu ponudu.</p></details>
@@ -88,7 +103,7 @@
       </section>
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -96,6 +111,7 @@
           <a class="btn line" href="mailto:dobardzicilijas123@gmail.com">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>

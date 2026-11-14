@@ -30,27 +30,42 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/pages.css" />
+    <link rel="preload" as="image" href="/assets/epohe/digital-0.webp" />
+    <script>document.documentElement.classList.add("js")</script>
+    <script src="/assets/pages.js" defer></script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://webera.website/#webera","name":"WebEra","slogan":"Dizajn van vremena","description":"Web dizajn i izrada web sajtova i online prodavnica za biznise iz Crne Gore, Srbije i BiH.","url":"https://webera.website/","logo":"https://webera.website/apple-touch-icon.png","image":"https://webera.website/og-image.jpg","email":"dobardzicilijas123@gmail.com","telephone":"+38267313289","address":{"@type":"PostalAddress","addressLocality":"Podgorica","addressCountry":"ME"},"areaServed":["Crna Gora","Srbija","Bosna i Hercegovina"],"sameAs":["https://www.instagram.com/webera_design/"]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WebEra","item":"https://webera.website/"},{"@type":"ListItem","position":2,"name":"Radovi","item":"https://webera.website/work"}]}</script>
   </head>
-  <body>
-    <header class="top">
-      <a class="logo" href="/">WebEra</a>
-      <nav class="pill" aria-label="Glavna navigacija">
+  <body data-film="digital">
+    <div class="film" aria-hidden="true">
+      <div class="film-frames"></div>
+      <div class="film-shade"></div>
+      <canvas class="dust"></canvas>
+    </div>
+    <div class="slit-intro" aria-hidden="true"><span></span></div>
+    <header class="nav">
+      <a class="nav-logo" href="/">WebEra</a>
+      <nav class="nav-pill" aria-label="Glavna navigacija">
         <a href="/services">Usluge</a>
+        <i aria-hidden="true"></i>
         <a href="/work" aria-current="page">Radovi</a>
+        <i aria-hidden="true"></i>
         <a href="/about">O nama</a>
+        <i aria-hidden="true"></i>
         <a href="/contact">Kontakt</a>
       </nav>
     </header>
+    <div class="hud" aria-hidden="true"><span class="hud-time">00:00:00:00</span><span class="hud-label">Radovi</span></div>
+    <div class="rail" aria-hidden="true"><span></span></div>
+    <div class="cursor-tag" aria-hidden="true">Otvori</div>
     <main>
       <p class="crumbs"><a href="/">WebEra</a> <i>/</i> <span aria-current="page">Radovi</span></p>
       <section class="hero">
         <p class="label">Radovi</p>
-        <h1>Sajtovi koje smo napravili</h1>
+        <h1><span class="mask-row"><span class="mask-line">Sajtovi koje smo napravili</span></span></h1>
         <p class="lead">Svaki projekat je priča za sebe. Ovo su sajtovi koje smo radili za firme iz Crne Gore.</p>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <ul class="grid">
         <li class="card">
           <a class="shot" href="/work/montana">
@@ -118,13 +133,13 @@
         </li>
       </ul>
       </section>
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>Vaš projekat</h2>
         <p>Treba vam sajt ili web shop? Pogledajte <a href="/services">usluge</a> ili nam se javite.</p>
       </section>
     </main>
     <footer class="foot">
-      <div class="foot-cta">
+      <div class="foot-cta" data-reveal>
         <p class="label">Dostupni za projekte</p>
         <p class="foot-title">Imate projekat? Napravimo ga.</p>
         <p class="actions">
@@ -132,6 +147,7 @@
           <a class="btn line" href="mailto:dobardzicilijas123@gmail.com">Pošalji email</a>
         </p>
       </div>
+      <div class="foot-line" aria-hidden="true"></div>
       <nav class="foot-links" aria-label="Sve stranice">
         <a href="/services">Usluge</a>
         <a href="/web-design">Web dizajn</a>
