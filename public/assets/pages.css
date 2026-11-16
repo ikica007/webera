@@ -335,3 +335,14 @@ body::after {
   content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 90px; z-index: 5; pointer-events: none;
   background: linear-gradient(transparent, rgba(5, 6, 8, 0.92));
 }
+
+/* treća boja: sekundara. Brojevi, oznake i tačke; linije i sjaj ostaju plavi. */
+:root { --tick: #ff4a2b; }
+.hud-time,
+.block > h2::before,
+.steps li::before,
+.services .label { color: var(--tick); }
+.foot-cta .label::before {
+  background: var(--tick);
+  box-shadow: 0 0 0 4px rgba(255, 74, 43, 0.2), 0 0 14px var(--tick);
+}
