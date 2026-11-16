@@ -1153,3 +1153,28 @@
     transition-delay: 0s;
   }
 }
+
+/* ---------- Treća boja: sekundara ----------
+   Crvena kazaljka za sekunde. Samo ono što mjeri vrijeme ili označava mjesto:
+   brojevi, oznake poglavlja, tačke i marker na liniji vremena. Linije i sjaj ostaju plavi. */
+:root {
+  --tick: #ff4a2b;
+}
+.hud-time > span:first-child,
+.loader-meta > span:last-child,
+.manifest-label,
+.principle-num,
+.work-count span {
+  color: var(--tick);
+}
+.hud-marker {
+  background: var(--tick);
+  box-shadow: 0 0 14px 3px rgba(255, 74, 43, 0.7);
+}
+.contact-chip i {
+  background: var(--tick);
+  box-shadow: 0 0 0 4px rgba(255, 74, 43, 0.2), 0 0 14px var(--tick);
+}
+.manifest-label::after {
+  background: rgba(255, 74, 43, 0.6);
+}
